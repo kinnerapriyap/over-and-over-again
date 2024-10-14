@@ -1,6 +1,7 @@
 package com.kinnerapriyap.overandoveragain
 
 import android.app.AlarmManager
+import android.app.AlarmManager.RTC_WAKEUP
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
@@ -9,8 +10,8 @@ import java.time.LocalDateTime
 import java.time.ZoneId
 
 data class AlarmItem(
-    val alarmTime : LocalDateTime,
-    val message : String
+    val alarmTime: LocalDateTime,
+    val message: String
 )
 
 interface AlarmScheduler {
@@ -20,7 +21,7 @@ interface AlarmScheduler {
 
 class DefaultAlarmScheduler(
     private val context: Context
-) : AlarmScheduler{
+) : AlarmScheduler {
 
     private val alarmManager = context.getSystemService(AlarmManager::class.java)
 
@@ -28,17 +29,19 @@ class DefaultAlarmScheduler(
         val intent = Intent(context, AlarmReceiver::class.java).apply {
             putExtra("EXTRA_MESSAGE", alarmItem.message)
         }
-        val alarmTime = alarmItem.alarmTime.atZone(ZoneId.systemDefault()).toEpochSecond()*1000L
-        alarmManager.setExactAndAllowWhileIdle(
-            AlarmManager.RTC_WAKEUP,
-            alarmTime,
-            PendingIntent.getBroadcast(
-                context,
-                alarmItem.hashCode(),
-                intent,
-                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        val alarmTime = alarmItem.alarmTime.atZone(ZoneId.systemDefault()).toEpochSecond() * 1000L
+        if (alarmManager.canScheduleExactAlarms()) {
+            alarmManager.setExactAndAllowWhileIdle(
+                RTC_WAKEUP,
+                alarmTime,
+                PendingIntent.getBroadcast(
+                    context,
+                    alarmItem.hashCode(),
+                    intent,
+                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+                )
             )
-        )
+        }
         Log.e("Alarm", "Alarm set at $alarmTime")
     }
 
