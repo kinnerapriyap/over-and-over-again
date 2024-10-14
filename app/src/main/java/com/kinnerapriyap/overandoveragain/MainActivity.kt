@@ -29,7 +29,7 @@ class MainActivity : ComponentActivity() {
                     MainContent(modifier = Modifier.padding(innerPadding)) {
                         when (it) {
                             is ClickEvent.ScheduleAlarm -> alarmItem = AlarmItem(
-                                LocalDateTime.now().plusSeconds(it.seconds.toLong()),
+                                LocalDateTime.now().plusSeconds(it.delaySeconds.toLong()),
                                 it.message
                             ).also { alarmItem -> alarmScheduler.schedule(alarmItem) }
 
@@ -55,6 +55,6 @@ class MainActivity : ComponentActivity() {
 internal const val CHANNEL_ID = "alarm_id"
 
 sealed interface ClickEvent {
-    data class ScheduleAlarm(val seconds: String, val message: String) : ClickEvent
+    data class ScheduleAlarm(val delaySeconds: String, val message: String) : ClickEvent
     data object CancelAlarm : ClickEvent
 }
