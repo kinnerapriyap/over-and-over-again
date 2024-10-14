@@ -1,9 +1,6 @@
 package com.kinnerapriyap.overandoveragain
 
 import android.app.AlarmManager
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -24,7 +21,6 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        createNotificationChannel()
         val alarmScheduler: AlarmScheduler = DefaultAlarmScheduler(this)
         var alarmItem: AlarmItem? = null
         setContent {
@@ -53,18 +49,6 @@ class MainActivity : ComponentActivity() {
             intent.setData(Uri.fromParts("package", packageName, null))
             startActivity(intent)
         }
-    }
-
-    private fun createNotificationChannel() {
-        val name = getString(R.string.channel_name)
-        val descriptionText = getString(R.string.channel_description)
-        val importance = NotificationManager.IMPORTANCE_DEFAULT
-        val channel = NotificationChannel(CHANNEL_ID, name, importance).apply {
-            description = descriptionText
-        }
-        val notificationManager: NotificationManager =
-            getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        notificationManager.createNotificationChannel(channel)
     }
 }
 

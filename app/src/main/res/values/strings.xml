@@ -1,5 +1,5 @@
 <resources>
     <string name="app_name">Over and over again</string>
-    <string name="channel_description">Alarms that run over and over again until you do what you\\'re supposed to.</string>
+    <string name="channel_description">Alarms that run over and over again until you do what you\'re supposed to.</string>
     <string name="channel_name">Repeating alarms</string>
 </resources>

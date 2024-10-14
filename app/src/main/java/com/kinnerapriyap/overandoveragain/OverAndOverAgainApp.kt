@@ -9,15 +9,14 @@ class OverAndOverAgainApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        val channelId = "alarm_id"
-        val channelName = "alarm_name"
-        val notificationManager =
+        val name = getString(R.string.channel_name)
+        val descriptionText = getString(R.string.channel_description)
+        val importance = NotificationManager.IMPORTANCE_DEFAULT
+        val channel = NotificationChannel(CHANNEL_ID, name, importance).apply {
+            description = descriptionText
+        }
+        val notificationManager: NotificationManager =
             getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        val channel = NotificationChannel(
-            channelId,
-            channelName,
-            NotificationManager.IMPORTANCE_HIGH
-        )
         notificationManager.createNotificationChannel(channel)
     }
 }
