@@ -19,7 +19,6 @@ fun TimePickerDial(
     onDismiss: () -> Unit,
 ) {
     val currentTime = Calendar.getInstance()
-
     val timePickerState = rememberTimePickerState(
         initialHour = currentTime.get(Calendar.HOUR_OF_DAY),
         initialMinute = currentTime.get(Calendar.MINUTE),

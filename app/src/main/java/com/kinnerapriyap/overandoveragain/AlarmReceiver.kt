@@ -12,14 +12,15 @@ class AlarmReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context?, intent: Intent?) {
         val message = intent?.getStringExtra("EXTRA_MESSAGE") ?: return
+        Log.e("AlarmReceiver", "Received alarm: $message")
         context?.run {
-            Log.e("Alarm", "Alarm received with message $message")
             val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
             val builder = NotificationCompat.Builder(this, CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_launcher_foreground)
-                .setContentTitle("Alarm Demo")
-                .setContentText("Notification sent with message $message")
+                .setContentTitle(context.getString(R.string.app_name))
+                .setContentText(message)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setCategory(NotificationCompat.CATEGORY_ALARM)
             notificationManager.notify(1, builder.build())
         }
     }

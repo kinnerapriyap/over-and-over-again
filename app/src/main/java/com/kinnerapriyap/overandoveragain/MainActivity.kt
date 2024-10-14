@@ -14,7 +14,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
 import com.kinnerapriyap.overandoveragain.ui.composables.MainContent
 import com.kinnerapriyap.overandoveragain.ui.theme.OverandoveragainTheme
-import java.time.LocalDateTime
+import java.util.Calendar
 
 
 class MainActivity : ComponentActivity() {
@@ -28,10 +28,14 @@ class MainActivity : ComponentActivity() {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     MainContent(modifier = Modifier.padding(innerPadding)) {
                         when (it) {
-                            is ClickEvent.ScheduleAlarm -> alarmItem = AlarmItem(
-                                LocalDateTime.now().plusSeconds(it.delaySeconds.toLong()),
-                                it.message
-                            ).also { alarmItem -> alarmScheduler.schedule(alarmItem) }
+                            is ClickEvent.ScheduleAlarm -> {
+                                alarmItem = AlarmItem(
+                                    alarmTime = it.startTime,
+                                    delaySeconds = it.delaySeconds,
+                                    noOfAlarms = it.noOfAlarms,
+                                    message = it.message
+                                ).also { alarmItem -> alarmScheduler.schedule(alarmItem) }
+                            }
 
                             ClickEvent.CancelAlarm -> alarmItem?.let(alarmScheduler::cancel)
                         }
@@ -55,6 +59,12 @@ class MainActivity : ComponentActivity() {
 internal const val CHANNEL_ID = "alarm_id"
 
 sealed interface ClickEvent {
-    data class ScheduleAlarm(val delaySeconds: String, val message: String) : ClickEvent
+    data class ScheduleAlarm(
+        val startTime: Calendar,
+        val delaySeconds: Long,
+        val noOfAlarms: Int,
+        val message: String
+    ) : ClickEvent
+
     data object CancelAlarm : ClickEvent
 }
