@@ -7,7 +7,6 @@ import android.content.Context.NOTIFICATION_SERVICE
 import android.content.Intent
 import android.util.Log
 import androidx.core.app.NotificationCompat
-import kotlin.random.Random.Default.nextInt
 
 class AlarmReceiver : BroadcastReceiver() {
 
@@ -22,7 +21,7 @@ class AlarmReceiver : BroadcastReceiver() {
                 .setContentText(message)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setCategory(NotificationCompat.CATEGORY_ALARM)
-            notificationManager.notify(nextInt(), builder.build())
+            notificationManager.notify(1, builder.build())
         }
     }
 }
