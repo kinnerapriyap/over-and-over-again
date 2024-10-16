@@ -1,7 +1,6 @@
 package com.kinnerapriyap.overandoveragain
 
 import android.app.AlarmManager
-import android.app.AlarmManager.RTC_WAKEUP
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
@@ -38,9 +37,8 @@ class DefaultAlarmScheduler(
                         set(Calendar.SECOND, 0)
                         set(Calendar.MILLISECOND, 0)
                     }.timeInMillis + count * alarmItem.delaySeconds * 1000
-                alarmManager.setExactAndAllowWhileIdle(
-                    RTC_WAKEUP,
-                    alarmTime,
+                alarmManager.setAlarmClock(
+                    AlarmManager.AlarmClockInfo(alarmTime, null),
                     PendingIntent.getBroadcast(
                         context,
                         alarmItem.hashCode() + count,
