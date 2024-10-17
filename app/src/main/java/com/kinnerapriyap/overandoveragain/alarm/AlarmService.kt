@@ -13,13 +13,12 @@ import androidx.core.app.NotificationCompat
 import com.kinnerapriyap.overandoveragain.AlarmActivity
 import com.kinnerapriyap.overandoveragain.CHANNEL_ID
 import com.kinnerapriyap.overandoveragain.R
-import kotlin.random.Random.Default.nextInt
 
-class AlarmService : Service() {
+class AlarmService: Service() {
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
         if (intent.action == "ALARM") {
             val message = intent.getStringExtra(EXTRA_MESSAGE)
-            val requestCode = intent.getStringExtra(REQUEST_CODE)
+            val requestCode = intent.getIntExtra(REQUEST_CODE, 0)
             Toast.makeText(this, "Received alarm: $message $requestCode", LENGTH_SHORT).show()
             val soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
             val notificationManager =
@@ -53,9 +52,8 @@ class AlarmService : Service() {
                 )
                 .build()
             notification.flags = notification.flags or Notification.FLAG_INSISTENT
-            val notificationId = nextInt()
-            notificationManager.notify(notificationId, notification)
-            startForeground(notificationId, notification)
+            notificationManager.notify(requestCode, notification)
+            startForeground(requestCode, notification)
         } else {
             Toast.makeText(this, "No action", LENGTH_SHORT).show()
         }

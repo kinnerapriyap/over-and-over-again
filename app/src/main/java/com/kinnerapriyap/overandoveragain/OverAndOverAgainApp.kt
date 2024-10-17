@@ -6,8 +6,11 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import android.media.RingtoneManager
+import com.kinnerapriyap.overandoveragain.alarm.DefaultAlarmRepository
 
 class OverAndOverAgainApp : Application() {
+    private val database by lazy { AppDatabase.getDatabase(this) }
+    val repository by lazy { DefaultAlarmRepository(database.alarmDao()) }
 
     override fun onCreate() {
         super.onCreate()

@@ -15,13 +15,13 @@ import java.util.Calendar
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TimePickerDial(
+    time: Calendar,
     onConfirm: (TimePickerState) -> Unit,
     onDismiss: () -> Unit,
 ) {
-    val currentTime = Calendar.getInstance()
     val timePickerState = rememberTimePickerState(
-        initialHour = currentTime.get(Calendar.HOUR_OF_DAY),
-        initialMinute = currentTime.get(Calendar.MINUTE),
+        initialHour = time.get(Calendar.HOUR_OF_DAY),
+        initialMinute = time.get(Calendar.MINUTE),
         is24Hour = true,
     )
 

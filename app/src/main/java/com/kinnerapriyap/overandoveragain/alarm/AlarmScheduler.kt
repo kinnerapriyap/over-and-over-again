@@ -6,11 +6,10 @@ import android.content.Context
 import android.content.Intent
 import android.widget.Toast
 import android.widget.Toast.LENGTH_SHORT
-import java.util.Calendar
 
 interface AlarmScheduler {
-    fun schedule(alarmItem: AlarmItem)
-    fun cancel(alarmItem: AlarmItem)
+    fun scheduleRepeatingAlarm(alarms: List<AlarmItem>)
+    fun cancelRepeatingAlarm(repeatingAlarmId: String)
 }
 
 const val REQUEST_CODE = "REQUEST_CODE"
@@ -22,25 +21,20 @@ class DefaultAlarmScheduler(
 
     private val alarmManager = context.getSystemService(AlarmManager::class.java)
 
-    override fun schedule(alarmItem: AlarmItem) {
+    override fun scheduleRepeatingAlarm(alarms: List<AlarmItem>) {
         if (alarmManager.canScheduleExactAlarms()) {
             Toast.makeText(context, "Alarms are being scheduled", LENGTH_SHORT).show()
-            repeat(alarmItem.count) { count ->
+            alarms.forEach {
                 val intent = Intent(context, AlarmService::class.java).apply {
                     action = "ALARM"
-                    putExtra(EXTRA_MESSAGE, alarmItem.message + alarmItem.delay * count)
-                    putExtra(REQUEST_CODE, alarmItem.hashCode())
+                    putExtra(EXTRA_MESSAGE, it.message)
+                    putExtra(REQUEST_CODE, it.id)
                 }
-                val alarmTime =
-                    alarmItem.time.apply {
-                        set(Calendar.SECOND, 0)
-                        set(Calendar.MILLISECOND, 0)
-                    }.timeInMillis + count * alarmItem.delay
                 alarmManager.setAlarmClock(
-                    AlarmManager.AlarmClockInfo(alarmTime, null),
+                    AlarmManager.AlarmClockInfo(it.time, null),
                     PendingIntent.getService(
                         context,
-                        alarmItem.hashCode() + count,
+                        it.id,
                         intent,
                         PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
                     )
@@ -49,14 +43,16 @@ class DefaultAlarmScheduler(
         }
     }
 
-    override fun cancel(alarmItem: AlarmItem) {
+    override fun cancelRepeatingAlarm(repeatingAlarmId: String) = Unit
+
+    /*override fun cancelRepeatingAlarm(repeatingAlarmRequest: RepeatingAlarmRequest) {
         alarmManager.cancel(
             PendingIntent.getService(
                 context,
-                alarmItem.hashCode(),
+                repeatingAlarmRequest.hashCode(),
                 Intent(context, AlarmService::class.java),
                 PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
             )
         )
-    }
+    }*/
 }

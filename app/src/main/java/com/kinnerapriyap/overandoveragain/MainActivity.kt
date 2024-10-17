@@ -2,7 +2,6 @@ package com.kinnerapriyap.overandoveragain
 
 import android.annotation.SuppressLint
 import android.app.AlarmManager
-import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -11,41 +10,53 @@ import android.provider.Settings
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import com.kinnerapriyap.overandoveragain.alarm.AlarmItem
-import com.kinnerapriyap.overandoveragain.alarm.AlarmScheduler
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.kinnerapriyap.overandoveragain.alarm.AlarmViewModel
+import com.kinnerapriyap.overandoveragain.alarm.AlarmViewModelFactory
 import com.kinnerapriyap.overandoveragain.alarm.DefaultAlarmScheduler
+import com.kinnerapriyap.overandoveragain.alarm.RepeatingAlarmRequest
 import com.kinnerapriyap.overandoveragain.ui.composables.MainContent
 import com.kinnerapriyap.overandoveragain.ui.theme.OverandoveragainTheme
-import java.util.Calendar
-import java.util.UUID
 
 
 class MainActivity : ComponentActivity() {
+    private val alarmViewModel: AlarmViewModel by viewModels {
+        AlarmViewModelFactory(
+            repository = (application as OverAndOverAgainApp).repository,
+            alarmScheduler = DefaultAlarmScheduler(this),
+        )
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        val alarmScheduler: AlarmScheduler = DefaultAlarmScheduler(this)
-        var alarmItem: AlarmItem? = null
         setContent {
+            val repeatingAlarms by alarmViewModel.repeatingAlarms.collectAsStateWithLifecycle(
+                emptyList()
+            )
             OverandoveragainTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    MainContent(modifier = Modifier.padding(innerPadding)) {
+                    MainContent(
+                        modifier = Modifier.padding(innerPadding),
+                        alarms = repeatingAlarms,
+                    ) {
                         when (it) {
-                            is ClickEvent.ScheduleAlarm -> {
-                                alarmItem = AlarmItem(
-                                    id = UUID.randomUUID().toString(),
-                                    time = it.time,
-                                    delay = it.delay,
-                                    count = it.count,
-                                    message = it.message
-                                ).also { alarmItem -> alarmScheduler.schedule(alarmItem) }
+                            is ClickEvent.ScheduleRepeatingAlarm -> {
+                                alarmViewModel.scheduleRepeatingAlarm(
+                                    RepeatingAlarmRequest(
+                                        time = it.time,
+                                        delay = it.delay,
+                                        count = it.count,
+                                        message = it.message,
+                                    )
+                                )
                             }
-
-                            ClickEvent.CancelAlarm -> alarmItem?.let(alarmScheduler::cancel)
                         }
                     }
                 }
@@ -57,7 +68,7 @@ class MainActivity : ComponentActivity() {
     override fun onResume() {
         super.onResume()
         val alarmManager = getSystemService(ALARM_SERVICE) as AlarmManager
-        val powerManager = getSystemService(Context.POWER_SERVICE) as PowerManager
+        val powerManager = getSystemService(POWER_SERVICE) as PowerManager
         if (!alarmManager.canScheduleExactAlarms()) {
             val intent = Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM)
             intent.data = Uri.fromParts("package", packageName, null)
@@ -73,12 +84,10 @@ class MainActivity : ComponentActivity() {
 internal const val CHANNEL_ID = "alarm_id"
 
 sealed interface ClickEvent {
-    data class ScheduleAlarm(
-        val time: Calendar,
+    data class ScheduleRepeatingAlarm(
+        val time: Long,
         val delay: Long,
         val count: Int,
         val message: String
     ) : ClickEvent
-
-    data object CancelAlarm : ClickEvent
 }
