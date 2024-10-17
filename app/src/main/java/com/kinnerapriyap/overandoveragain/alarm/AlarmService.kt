@@ -31,6 +31,8 @@ class AlarmService : Service() {
                 .setCategory(NotificationCompat.CATEGORY_ALARM)
                 .setSound(soundUri)
                 .setForegroundServiceBehavior(NotificationCompat.FOREGROUND_SERVICE_IMMEDIATE)
+                .setAutoCancel(true)
+                .setTimeoutAfter(1000 * 60)
                 .setContentIntent(
                     PendingIntent.getActivity(
                         this,
