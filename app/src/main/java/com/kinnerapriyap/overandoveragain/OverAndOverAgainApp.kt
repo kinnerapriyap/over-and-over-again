@@ -6,14 +6,29 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import android.media.RingtoneManager
+import androidx.room.Room
+import com.kinnerapriyap.overandoveragain.alarm.AlarmRepository
+import com.kinnerapriyap.overandoveragain.alarm.AlarmScheduler
+import com.kinnerapriyap.overandoveragain.alarm.AlarmViewModel
 import com.kinnerapriyap.overandoveragain.alarm.DefaultAlarmRepository
+import com.kinnerapriyap.overandoveragain.alarm.DefaultAlarmScheduler
+import com.kinnerapriyap.overandoveragain.alarm.DefaultAlarmViewModel
+import org.koin.android.ext.koin.androidContext
+import org.koin.android.ext.koin.androidLogger
+import org.koin.androidx.viewmodel.dsl.viewModelOf
+import org.koin.core.context.startKoin
+import org.koin.core.module.dsl.bind
+import org.koin.core.module.dsl.singleOf
+import org.koin.dsl.module
 
 class OverAndOverAgainApp : Application() {
-    private val database by lazy { AppDatabase.getDatabase(this) }
-    val repository by lazy { DefaultAlarmRepository(database.alarmDao()) }
-
     override fun onCreate() {
         super.onCreate()
+        startKoin {
+            androidLogger()
+            androidContext(this@OverAndOverAgainApp)
+            modules(appModule)
+        }
         val name = getString(R.string.channel_name)
         val descriptionText = getString(R.string.channel_description)
         val importance = NotificationManager.IMPORTANCE_HIGH
@@ -28,4 +43,17 @@ class OverAndOverAgainApp : Application() {
             getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.createNotificationChannel(channel)
     }
+}
+
+val appModule = module {
+    single<AppDatabase> {
+        Room.databaseBuilder(
+            androidContext(),
+            AppDatabase::class.java,
+            "alarm_database"
+        ).build()
+    }
+    single<AlarmRepository> { DefaultAlarmRepository(get<AppDatabase>().alarmDao()) }
+    singleOf(::DefaultAlarmScheduler) { bind<AlarmScheduler>() }
+    viewModelOf(::DefaultAlarmViewModel) { bind<AlarmViewModel>() }
 }

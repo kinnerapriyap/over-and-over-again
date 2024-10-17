@@ -15,9 +15,7 @@ interface AlarmScheduler {
 const val REQUEST_CODE = "REQUEST_CODE"
 const val EXTRA_MESSAGE = "EXTRA_MESSAGE"
 
-class DefaultAlarmScheduler(
-    private val context: Context
-) : AlarmScheduler {
+class DefaultAlarmScheduler(private val context: Context) : AlarmScheduler {
 
     private val alarmManager = context.getSystemService(AlarmManager::class.java)
 

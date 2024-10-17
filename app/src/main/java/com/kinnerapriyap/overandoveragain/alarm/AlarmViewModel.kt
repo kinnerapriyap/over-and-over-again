@@ -1,7 +1,6 @@
 package com.kinnerapriyap.overandoveragain.alarm
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
@@ -38,18 +37,5 @@ class DefaultAlarmViewModel(
             repository.insertAll(alarms)
             alarmScheduler.scheduleRepeatingAlarm(alarms)
         }
-    }
-}
-
-class AlarmViewModelFactory(
-    private val repository: AlarmRepository,
-    private val alarmScheduler: AlarmScheduler,
-) : ViewModelProvider.Factory {
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(AlarmViewModel::class.java)) {
-            @Suppress("UNCHECKED_CAST")
-            return DefaultAlarmViewModel(repository, alarmScheduler) as T
-        }
-        throw IllegalArgumentException("Unknown ViewModel class")
     }
 }

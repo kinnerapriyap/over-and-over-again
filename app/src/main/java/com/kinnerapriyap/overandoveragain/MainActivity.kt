@@ -10,28 +10,20 @@ import android.provider.Settings
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.kinnerapriyap.overandoveragain.alarm.AlarmViewModel
-import com.kinnerapriyap.overandoveragain.alarm.AlarmViewModelFactory
-import com.kinnerapriyap.overandoveragain.alarm.DefaultAlarmScheduler
+import com.kinnerapriyap.overandoveragain.alarm.DefaultAlarmViewModel
 import com.kinnerapriyap.overandoveragain.alarm.RepeatingAlarmRequest
 import com.kinnerapriyap.overandoveragain.ui.composables.MainContent
 import com.kinnerapriyap.overandoveragain.ui.theme.OverandoveragainTheme
-
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : ComponentActivity() {
-    private val alarmViewModel: AlarmViewModel by viewModels {
-        AlarmViewModelFactory(
-            repository = (application as OverAndOverAgainApp).repository,
-            alarmScheduler = DefaultAlarmScheduler(this),
-        )
-    }
+    private val alarmViewModel by viewModel<DefaultAlarmViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
