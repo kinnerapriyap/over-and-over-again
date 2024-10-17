@@ -8,13 +8,6 @@ import android.widget.Toast
 import android.widget.Toast.LENGTH_SHORT
 import java.util.Calendar
 
-data class AlarmItem(
-    val alarmTime: Calendar,
-    val delaySeconds: Long,
-    val noOfAlarms: Int,
-    val message: String
-)
-
 interface AlarmScheduler {
     fun schedule(alarmItem: AlarmItem)
     fun cancel(alarmItem: AlarmItem)
@@ -32,17 +25,17 @@ class DefaultAlarmScheduler(
     override fun schedule(alarmItem: AlarmItem) {
         if (alarmManager.canScheduleExactAlarms()) {
             Toast.makeText(context, "Alarms are being scheduled", LENGTH_SHORT).show()
-            repeat(alarmItem.noOfAlarms) { count ->
+            repeat(alarmItem.count) { count ->
                 val intent = Intent(context, AlarmService::class.java).apply {
                     action = "ALARM"
-                    putExtra(EXTRA_MESSAGE, alarmItem.message + alarmItem.delaySeconds * count)
+                    putExtra(EXTRA_MESSAGE, alarmItem.message + alarmItem.delay * count)
                     putExtra(REQUEST_CODE, alarmItem.hashCode())
                 }
                 val alarmTime =
-                    alarmItem.alarmTime.apply {
+                    alarmItem.time.apply {
                         set(Calendar.SECOND, 0)
                         set(Calendar.MILLISECOND, 0)
-                    }.timeInMillis + count * alarmItem.delaySeconds * 1000
+                    }.timeInMillis + count * alarmItem.delay
                 alarmManager.setAlarmClock(
                     AlarmManager.AlarmClockInfo(alarmTime, null),
                     PendingIntent.getService(

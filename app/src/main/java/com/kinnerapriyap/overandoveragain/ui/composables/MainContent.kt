@@ -126,7 +126,7 @@ fun MainContent(modifier: Modifier = Modifier, onClick: (ClickEvent) -> Unit) {
                     onClick(
                         ClickEvent.ScheduleAlarm(
                             cal,
-                            delayText.toLong(),
+                            delayText.toLong() * 1000,
                             noOfAlarms.toInt(),
                             messageText
                         )

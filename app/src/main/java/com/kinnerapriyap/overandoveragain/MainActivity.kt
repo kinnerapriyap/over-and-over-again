@@ -21,6 +21,7 @@ import com.kinnerapriyap.overandoveragain.alarm.DefaultAlarmScheduler
 import com.kinnerapriyap.overandoveragain.ui.composables.MainContent
 import com.kinnerapriyap.overandoveragain.ui.theme.OverandoveragainTheme
 import java.util.Calendar
+import java.util.UUID
 
 
 class MainActivity : ComponentActivity() {
@@ -36,9 +37,10 @@ class MainActivity : ComponentActivity() {
                         when (it) {
                             is ClickEvent.ScheduleAlarm -> {
                                 alarmItem = AlarmItem(
-                                    alarmTime = it.startTime,
-                                    delaySeconds = it.delaySeconds,
-                                    noOfAlarms = it.noOfAlarms,
+                                    id = UUID.randomUUID().toString(),
+                                    time = it.time,
+                                    delay = it.delay,
+                                    count = it.count,
                                     message = it.message
                                 ).also { alarmItem -> alarmScheduler.schedule(alarmItem) }
                             }
@@ -72,9 +74,9 @@ internal const val CHANNEL_ID = "alarm_id"
 
 sealed interface ClickEvent {
     data class ScheduleAlarm(
-        val startTime: Calendar,
-        val delaySeconds: Long,
-        val noOfAlarms: Int,
+        val time: Calendar,
+        val delay: Long,
+        val count: Int,
         val message: String
     ) : ClickEvent
 
