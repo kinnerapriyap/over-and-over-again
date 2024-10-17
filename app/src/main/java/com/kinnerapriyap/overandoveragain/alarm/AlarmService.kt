@@ -16,7 +16,6 @@ import kotlin.random.Random.Default.nextInt
 
 class AlarmService : Service() {
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
-        Log.e("AlarmService", "Received alarm!")
         if (intent.action == "ALARM") {
             val message = intent.getStringExtra("EXTRA_MESSAGE")
             Log.e("AlarmService", "Received alarm: $message")
