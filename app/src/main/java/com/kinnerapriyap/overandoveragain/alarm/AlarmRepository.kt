@@ -13,16 +13,15 @@ interface AlarmRepository {
     suspend fun delete(repeatingAlarmId: String)
 }
 
+@WorkerThread
 class DefaultAlarmRepository(private val alarmDao: AlarmDao) : AlarmRepository {
 
     override val alarms: Flow<List<AlarmItem>> = alarmDao.getAll()
 
-    @WorkerThread
     override suspend fun insert(alarm: AlarmItem) {
         alarmDao.insert(alarm)
     }
 
-    @WorkerThread
     override suspend fun insertAll(alarms: List<AlarmItem>) {
         alarmDao.insertAll(alarms)
     }
