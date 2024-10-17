@@ -6,11 +6,11 @@ import kotlinx.coroutines.flow.Flow
 interface AlarmRepository {
     val alarms: Flow<List<AlarmItem>>
 
-    @WorkerThread
     suspend fun insert(alarm: AlarmItem)
 
-    @WorkerThread
     suspend fun insertAll(alarms: List<AlarmItem>)
+
+    suspend fun delete(repeatingAlarmId: String)
 }
 
 class DefaultAlarmRepository(private val alarmDao: AlarmDao) : AlarmRepository {
@@ -25,5 +25,9 @@ class DefaultAlarmRepository(private val alarmDao: AlarmDao) : AlarmRepository {
     @WorkerThread
     override suspend fun insertAll(alarms: List<AlarmItem>) {
         alarmDao.insertAll(alarms)
+    }
+
+    override suspend fun delete(repeatingAlarmId: String) {
+        alarmDao.deleteGroup(repeatingAlarmId)
     }
 }
