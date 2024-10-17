@@ -18,10 +18,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.OverAndOverAgain">
 
-        <receiver android:name=".alarm.AlarmReceiver" />
-
         <service
-            android:name=".alarm.AlarmService"
+            android:name=".service.AlarmService"
             android:enabled="true"
             android:exported="false"
             android:foregroundServiceType="systemExempted" />
@@ -38,7 +36,7 @@
         </activity>
 
         <activity
-            android:name=".AlarmActivity"
+            android:name=".alarm.AlarmActivity"
             android:launchMode="singleTop"
             android:showOnLockScreen="true" />
     </application>

@@ -1,20 +1,24 @@
-package com.kinnerapriyap.overandoveragain.alarm
+package com.kinnerapriyap.overandoveragain
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.kinnerapriyap.overandoveragain.alarm.AlarmItem
+import com.kinnerapriyap.overandoveragain.alarm.AlarmRepository
+import com.kinnerapriyap.overandoveragain.alarm.AlarmScheduler
+import com.kinnerapriyap.overandoveragain.alarm.RepeatingAlarmRequest
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import java.util.UUID
 
-interface AlarmViewModel {
+interface MainViewModel {
     val repeatingAlarms: Flow<List<AlarmItem>>
     fun scheduleRepeatingAlarm(repeatingAlarmRequest: RepeatingAlarmRequest)
 }
 
-class DefaultAlarmViewModel(
+class DefaultMainViewModel(
     private val repository: AlarmRepository,
     private val alarmScheduler: AlarmScheduler,
-) : AlarmViewModel, ViewModel() {
+) : MainViewModel, ViewModel() {
 
     override val repeatingAlarms: Flow<List<AlarmItem>> = repository.alarms
 

@@ -10,7 +10,9 @@ interface AlarmRepository {
 
     suspend fun insertAll(alarms: List<AlarmItem>)
 
-    suspend fun delete(repeatingAlarmId: String)
+    suspend fun delete(alarmId: Int)
+
+    suspend fun deleteGroup(repeatingAlarmId: String)
 }
 
 @WorkerThread
@@ -26,7 +28,11 @@ class DefaultAlarmRepository(private val alarmDao: AlarmDao) : AlarmRepository {
         alarmDao.insertAll(alarms)
     }
 
-    override suspend fun delete(repeatingAlarmId: String) {
+    override suspend fun delete(alarmId: Int) {
+        alarmDao.delete(alarmId)
+    }
+
+    override suspend fun deleteGroup(repeatingAlarmId: String) {
         alarmDao.deleteGroup(repeatingAlarmId)
     }
 }

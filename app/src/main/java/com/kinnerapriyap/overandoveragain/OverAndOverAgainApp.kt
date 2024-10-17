@@ -9,16 +9,16 @@ import android.media.RingtoneManager
 import androidx.room.Room
 import com.kinnerapriyap.overandoveragain.alarm.AlarmRepository
 import com.kinnerapriyap.overandoveragain.alarm.AlarmScheduler
-import com.kinnerapriyap.overandoveragain.alarm.AlarmViewModel
 import com.kinnerapriyap.overandoveragain.alarm.DefaultAlarmRepository
 import com.kinnerapriyap.overandoveragain.alarm.DefaultAlarmScheduler
-import com.kinnerapriyap.overandoveragain.alarm.DefaultAlarmViewModel
+import com.kinnerapriyap.overandoveragain.service.DefaultServiceViewModel
+import com.kinnerapriyap.overandoveragain.service.ServiceViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.androidx.viewmodel.dsl.viewModelOf
 import org.koin.core.context.startKoin
 import org.koin.core.module.dsl.bind
-import org.koin.core.module.dsl.singleOf
+import org.koin.core.module.dsl.factoryOf
 import org.koin.dsl.module
 
 class OverAndOverAgainApp : Application() {
@@ -54,6 +54,7 @@ val appModule = module {
         ).build()
     }
     single<AlarmRepository> { DefaultAlarmRepository(get<AppDatabase>().alarmDao()) }
-    singleOf(::DefaultAlarmScheduler) { bind<AlarmScheduler>() }
-    viewModelOf(::DefaultAlarmViewModel) { bind<AlarmViewModel>() }
+    factoryOf(::DefaultAlarmScheduler) { bind<AlarmScheduler>() }
+    viewModelOf(::DefaultMainViewModel) { bind<MainViewModel>() }
+    viewModelOf(::DefaultServiceViewModel) { bind<ServiceViewModel>() }
 }

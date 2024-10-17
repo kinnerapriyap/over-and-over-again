@@ -16,14 +16,13 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.kinnerapriyap.overandoveragain.alarm.DefaultAlarmViewModel
 import com.kinnerapriyap.overandoveragain.alarm.RepeatingAlarmRequest
 import com.kinnerapriyap.overandoveragain.ui.composables.MainContent
 import com.kinnerapriyap.overandoveragain.ui.theme.OverandoveragainTheme
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : ComponentActivity() {
-    private val alarmViewModel by viewModel<DefaultAlarmViewModel>()
+    private val alarmViewModel by viewModel<DefaultMainViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
