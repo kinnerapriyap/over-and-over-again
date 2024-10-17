@@ -29,7 +29,8 @@ class DefaultAlarmScheduler(
         if (alarmManager.canScheduleExactAlarms()) {
             Log.e("DefaultAlarmScheduler", "Alarms are being scheduled")
             repeat(alarmItem.noOfAlarms) { count ->
-                val intent = Intent(context, AlarmReceiver::class.java).apply {
+                val intent = Intent(context, AlarmService::class.java).apply {
+                    action = "ALARM"
                     putExtra("EXTRA_MESSAGE", alarmItem.message + alarmItem.delaySeconds * count)
                 }
                 val alarmTime =
@@ -39,7 +40,7 @@ class DefaultAlarmScheduler(
                     }.timeInMillis + count * alarmItem.delaySeconds * 1000
                 alarmManager.setAlarmClock(
                     AlarmManager.AlarmClockInfo(alarmTime, null),
-                    PendingIntent.getBroadcast(
+                    PendingIntent.getService(
                         context,
                         alarmItem.hashCode() + count,
                         intent,
@@ -52,10 +53,10 @@ class DefaultAlarmScheduler(
 
     override fun cancel(alarmItem: AlarmItem) {
         alarmManager.cancel(
-            PendingIntent.getBroadcast(
+            PendingIntent.getService(
                 context,
                 alarmItem.hashCode(),
-                Intent(context, AlarmReceiver::class.java),
+                Intent(context, AlarmService::class.java),
                 PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
             )
         )

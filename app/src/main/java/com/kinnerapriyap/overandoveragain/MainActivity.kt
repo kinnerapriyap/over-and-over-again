@@ -1,9 +1,12 @@
 package com.kinnerapriyap.overandoveragain
 
+import android.annotation.SuppressLint
 import android.app.AlarmManager
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.os.PowerManager
 import android.provider.Settings
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -45,12 +48,18 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    @SuppressLint("BatteryLife")
     override fun onResume() {
         super.onResume()
         val alarmManager = getSystemService(ALARM_SERVICE) as AlarmManager
+        val powerManager = getSystemService(Context.POWER_SERVICE) as PowerManager
         if (!alarmManager.canScheduleExactAlarms()) {
             val intent = Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM)
-            intent.setData(Uri.fromParts("package", packageName, null))
+            intent.data = Uri.fromParts("package", packageName, null)
+            startActivity(intent)
+        } else if (!powerManager.isIgnoringBatteryOptimizations(packageName)) {
+            val intent = Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS)
+            intent.data = Uri.fromParts("package", packageName, null)
             startActivity(intent)
         }
     }
