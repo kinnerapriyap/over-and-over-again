@@ -17,10 +17,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.OverAndOverAgain">
 
-        <receiver android:name=".AlarmReceiver" />
+        <receiver android:name=".alarm.AlarmReceiver" />
 
         <service
-            android:name=".AlarmService"
+            android:name=".alarm.AlarmService"
             android:enabled="true"
             android:exported="false"
             android:foregroundServiceType="systemExempted" />

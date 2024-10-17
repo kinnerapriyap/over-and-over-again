@@ -1,4 +1,4 @@
-package com.kinnerapriyap.overandoveragain
+package com.kinnerapriyap.overandoveragain.alarm
 
 import android.app.Notification
 import android.app.NotificationManager
@@ -8,6 +8,8 @@ import android.media.RingtoneManager
 import android.os.IBinder
 import android.util.Log
 import androidx.core.app.NotificationCompat
+import com.kinnerapriyap.overandoveragain.CHANNEL_ID
+import com.kinnerapriyap.overandoveragain.R
 import kotlin.random.Random.Default.nextInt
 
 class AlarmService : Service() {

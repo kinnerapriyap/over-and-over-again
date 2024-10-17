@@ -1,4 +1,4 @@
-package com.kinnerapriyap.overandoveragain
+package com.kinnerapriyap.overandoveragain.alarm
 
 import android.app.AlarmManager
 import android.app.PendingIntent

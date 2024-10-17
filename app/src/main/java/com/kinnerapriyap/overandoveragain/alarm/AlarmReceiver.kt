@@ -1,4 +1,4 @@
-package com.kinnerapriyap.overandoveragain
+package com.kinnerapriyap.overandoveragain.alarm
 
 import android.app.Notification
 import android.app.NotificationManager
@@ -9,6 +9,8 @@ import android.content.Intent
 import android.media.RingtoneManager
 import android.util.Log
 import androidx.core.app.NotificationCompat
+import com.kinnerapriyap.overandoveragain.CHANNEL_ID
+import com.kinnerapriyap.overandoveragain.R
 
 
 class AlarmReceiver : BroadcastReceiver() {
