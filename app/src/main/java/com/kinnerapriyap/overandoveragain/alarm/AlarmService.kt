@@ -7,7 +7,8 @@ import android.app.Service
 import android.content.Intent
 import android.media.RingtoneManager
 import android.os.IBinder
-import android.util.Log
+import android.widget.Toast
+import android.widget.Toast.LENGTH_SHORT
 import androidx.core.app.NotificationCompat
 import com.kinnerapriyap.overandoveragain.AlarmActivity
 import com.kinnerapriyap.overandoveragain.CHANNEL_ID
@@ -17,8 +18,9 @@ import kotlin.random.Random.Default.nextInt
 class AlarmService : Service() {
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
         if (intent.action == "ALARM") {
-            val message = intent.getStringExtra("EXTRA_MESSAGE")
-            Log.e("AlarmService", "Received alarm: $message")
+            val message = intent.getStringExtra(EXTRA_MESSAGE)
+            val requestCode = intent.getStringExtra(REQUEST_CODE)
+            Toast.makeText(this, "Received alarm: $message $requestCode", LENGTH_SHORT).show()
             val soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
             val notificationManager =
                 getSystemService(NOTIFICATION_SERVICE) as NotificationManager
@@ -55,7 +57,7 @@ class AlarmService : Service() {
             notificationManager.notify(notificationId, notification)
             startForeground(notificationId, notification)
         } else {
-            Log.e("AlarmService", "onStartCommand: No action")
+            Toast.makeText(this, "No action", LENGTH_SHORT).show()
         }
         return START_STICKY
     }

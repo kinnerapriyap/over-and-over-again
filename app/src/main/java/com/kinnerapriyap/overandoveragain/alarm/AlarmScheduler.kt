@@ -4,7 +4,8 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.util.Log
+import android.widget.Toast
+import android.widget.Toast.LENGTH_SHORT
 import java.util.Calendar
 
 data class AlarmItem(
@@ -19,6 +20,9 @@ interface AlarmScheduler {
     fun cancel(alarmItem: AlarmItem)
 }
 
+const val REQUEST_CODE = "REQUEST_CODE"
+const val EXTRA_MESSAGE = "EXTRA_MESSAGE"
+
 class DefaultAlarmScheduler(
     private val context: Context
 ) : AlarmScheduler {
@@ -27,11 +31,12 @@ class DefaultAlarmScheduler(
 
     override fun schedule(alarmItem: AlarmItem) {
         if (alarmManager.canScheduleExactAlarms()) {
-            Log.e("DefaultAlarmScheduler", "Alarms are being scheduled")
+            Toast.makeText(context, "Alarms are being scheduled", LENGTH_SHORT).show()
             repeat(alarmItem.noOfAlarms) { count ->
                 val intent = Intent(context, AlarmService::class.java).apply {
                     action = "ALARM"
-                    putExtra("EXTRA_MESSAGE", alarmItem.message + alarmItem.delaySeconds * count)
+                    putExtra(EXTRA_MESSAGE, alarmItem.message + alarmItem.delaySeconds * count)
+                    putExtra(REQUEST_CODE, alarmItem.hashCode())
                 }
                 val alarmTime =
                     alarmItem.alarmTime.apply {
