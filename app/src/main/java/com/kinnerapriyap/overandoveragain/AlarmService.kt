@@ -28,8 +28,9 @@ class AlarmService : Service() {
                 .setSound(soundUri)
                 .build()
             notification.flags = notification.flags or Notification.FLAG_INSISTENT
-            //notificationManager.notify(nextInt(), notification)
-            startForeground(nextInt(), notification)
+            val notificationId = nextInt()
+            notificationManager.notify(notificationId, notification)
+            startForeground(notificationId, notification)
         } else {
             Log.e("AlarmService", "onStartCommand: No action")
         }
