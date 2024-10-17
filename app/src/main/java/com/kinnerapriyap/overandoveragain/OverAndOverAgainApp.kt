@@ -1,6 +1,7 @@
 package com.kinnerapriyap.overandoveragain
 
 import android.app.Application
+import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
@@ -18,6 +19,7 @@ class OverAndOverAgainApp : Application() {
             description = descriptionText
             setSound(defaultSoundUri, null)
             enableVibration(true)
+            lockscreenVisibility = Notification.VISIBILITY_PUBLIC
         }
         val notificationManager: NotificationManager =
             getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
