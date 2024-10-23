@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -80,6 +82,13 @@ fun MainContent(
             }
         )
     }
+    LazyColumn(modifier = modifier) {
+        items(alarms.groupBy { it.repeatingAlarmId }.toList()) { (_, group) ->
+            val times = group.map { it.time.convertToDisplayTime(locale = getLocale()) }
+            Text(text = times.joinToString())
+            Spacer(modifier = Modifier.height(8.dp))
+        }
+    }
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -87,14 +96,6 @@ fun MainContent(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        alarms
-            .groupBy { it.repeatingAlarmId }
-            .forEach { (_, group) ->
-                Text(text = group.map {
-                    it.time.convertToDisplayTime(locale = getLocale())
-                }.joinToString())
-                Spacer(modifier = Modifier.height(8.dp))
-            }
         OutlinedTextField(
             value = startTime.timeInMillis.convertToDisplayTime(locale = getLocale()),
             onValueChange = { },

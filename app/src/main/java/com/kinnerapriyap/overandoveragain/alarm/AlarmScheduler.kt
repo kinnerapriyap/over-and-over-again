@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.widget.Toast
 import android.widget.Toast.LENGTH_SHORT
+import com.kinnerapriyap.overandoveragain.service.ACTION_ALARM
 import com.kinnerapriyap.overandoveragain.service.AlarmService
 
 interface AlarmScheduler {
@@ -25,7 +26,7 @@ class DefaultAlarmScheduler(private val context: Context) : AlarmScheduler {
             Toast.makeText(context, "Alarms are being scheduled", LENGTH_SHORT).show()
             alarms.forEach {
                 val intent = Intent(context, AlarmService::class.java).apply {
-                    action = "ALARM"
+                    action = ACTION_ALARM
                     putExtra(EXTRA_MESSAGE, it.message)
                     putExtra(REQUEST_CODE, it.id)
                 }

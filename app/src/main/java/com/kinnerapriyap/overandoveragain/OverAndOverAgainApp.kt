@@ -4,7 +4,6 @@ import android.app.Application
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.content.Context
 import android.media.RingtoneManager
 import androidx.room.Room
 import com.kinnerapriyap.overandoveragain.alarm.AlarmRepository
@@ -40,7 +39,7 @@ class OverAndOverAgainApp : Application() {
             lockscreenVisibility = Notification.VISIBILITY_PUBLIC
         }
         val notificationManager: NotificationManager =
-            getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            getSystemService(NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.createNotificationChannel(channel)
     }
 }

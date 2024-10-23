@@ -17,11 +17,13 @@ import com.kinnerapriyap.overandoveragain.alarm.EXTRA_MESSAGE
 import com.kinnerapriyap.overandoveragain.alarm.REQUEST_CODE
 import org.koin.android.ext.android.inject
 
+internal const val ACTION_ALARM = "ALARM"
+
 class AlarmService : Service() {
     private val viewModel: ServiceViewModel by inject()
 
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
-        if (intent.action == "ALARM") {
+        if (intent.action == ACTION_ALARM) {
             val message = intent.getStringExtra(EXTRA_MESSAGE)
             val requestCode = intent.getIntExtra(REQUEST_CODE, 0)
             Toast.makeText(this, "Received alarm: $message $requestCode", LENGTH_SHORT).show()

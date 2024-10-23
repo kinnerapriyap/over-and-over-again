@@ -12,9 +12,14 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kinnerapriyap.overandoveragain.alarm.RepeatingAlarmRequest
 import com.kinnerapriyap.overandoveragain.ui.composables.MainContent
@@ -32,24 +37,24 @@ class MainActivity : ComponentActivity() {
                 emptyList()
             )
             OverandoveragainTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                Scaffold(
+                    modifier = Modifier.fillMaxSize(),
+                    floatingActionButton = {
+                        FloatingActionButton(onClick = {
+
+                        }) {
+                            Icon(
+                                imageVector = Icons.Filled.Add,
+                                contentDescription = stringResource(R.string.add_alarms)
+                            )
+                        }
+                    }
+                ) { innerPadding ->
                     MainContent(
                         modifier = Modifier.padding(innerPadding),
                         alarms = repeatingAlarms,
-                    ) {
-                        when (it) {
-                            is ClickEvent.ScheduleRepeatingAlarm -> {
-                                alarmViewModel.scheduleRepeatingAlarm(
-                                    RepeatingAlarmRequest(
-                                        time = it.time,
-                                        delay = it.delay,
-                                        count = it.count,
-                                        message = it.message,
-                                    )
-                                )
-                            }
-                        }
-                    }
+                        onClick = { onClickEvent(it) }
+                    )
                 }
             }
         }
@@ -68,6 +73,18 @@ class MainActivity : ComponentActivity() {
             val intent = Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS)
             intent.data = Uri.fromParts("package", packageName, null)
             startActivity(intent)
+        }
+    }
+
+    private fun onClickEvent(clickEvent: ClickEvent) = when (clickEvent) {
+        is ClickEvent.ScheduleRepeatingAlarm -> {
+            val repeatingAlarmRequest = RepeatingAlarmRequest(
+                time = clickEvent.time,
+                delay = clickEvent.delay,
+                count = clickEvent.count,
+                message = clickEvent.message
+            )
+            alarmViewModel.scheduleRepeatingAlarm(repeatingAlarmRequest)
         }
     }
 }
