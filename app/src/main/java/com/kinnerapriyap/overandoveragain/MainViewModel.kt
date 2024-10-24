@@ -6,18 +6,21 @@ import com.kinnerapriyap.overandoveragain.alarm.AlarmItem
 import com.kinnerapriyap.overandoveragain.alarm.AlarmRepository
 import com.kinnerapriyap.overandoveragain.alarm.AlarmScheduler
 import com.kinnerapriyap.overandoveragain.alarm.RepeatingAlarmRequest
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import java.util.Calendar
 import java.util.UUID
+import kotlin.collections.groupBy
 
 interface MainViewModel {
     val currentTime: StateFlow<Triple<Int, Int, Int>>
-    val repeatingAlarms: Flow<List<AlarmItem>>
+    val groupedAlarms: Flow<List<List<AlarmItem>>>
     fun scheduleRepeatingAlarm(repeatingAlarmRequest: RepeatingAlarmRequest)
 }
 
@@ -43,7 +46,10 @@ class DefaultMainViewModel(
         }
     }
 
-    override val repeatingAlarms: Flow<List<AlarmItem>> = repository.alarms
+    @OptIn(ExperimentalCoroutinesApi::class)
+    override val groupedAlarms: Flow<List<List<AlarmItem>>> = repository.alarms.mapLatest {
+        it.groupBy { it.repeatingAlarmId }.values.sortedBy { it[0].time }
+    }
 
     override fun scheduleRepeatingAlarm(repeatingAlarmRequest: RepeatingAlarmRequest) {
         viewModelScope.launch {

@@ -37,7 +37,7 @@ import java.util.Locale
 
 @Composable
 fun ListContent(
-    alarms: List<AlarmItem>,
+    groupedAlarms: List<List<AlarmItem>>,
     currentTime: Triple<Int, Int, Int>,
     modifier: Modifier = Modifier,
     onClick: (ClickEvent) -> Unit
@@ -65,15 +65,13 @@ fun ListContent(
             Clock(currentTime = currentTime)
             Spacer(modifier = Modifier.height(16.dp))
             HorizontalDivider()
-            if (alarms.isEmpty()) {
+            if (groupedAlarms.isEmpty()) {
                 Text(
                     text = stringResource(R.string.no_alarms_yet),
                     modifier = Modifier.padding(32.dp),
                     style = MaterialTheme.typography.headlineSmall
                 )
             } else {
-                val groupedAlarms =
-                    alarms.groupBy { it.repeatingAlarmId }.values.sortedBy { it[0].time }.toList()
                 LazyColumn(contentPadding = PaddingValues(vertical = 16.dp)) {
                     items(groupedAlarms) { group ->
                         val times = group.map { it.time.convertToDisplayTime(locale = getLocale()) }
