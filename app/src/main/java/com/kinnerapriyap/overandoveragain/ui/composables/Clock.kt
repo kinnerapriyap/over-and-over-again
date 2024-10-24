@@ -1,7 +1,6 @@
 package com.kinnerapriyap.overandoveragain.ui.composables
 
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -18,19 +17,14 @@ import kotlin.math.sin
 
 @Composable
 fun Clock(
-    currentTime: Triple<Int, Int, Int>,
+    time: Triple<Int, Int, Int>,
     modifier: Modifier = Modifier,
     color: Color = Color.Black,
     showSeconds: Boolean = true,
-    width: Dp = 300.dp,
-    height: Dp = 300.dp,
+    clockSize: Dp = 300.dp,
 ) {
-    val (hours, minutes, seconds) = currentTime
-    Canvas(
-        modifier = modifier
-            .padding(32.dp)
-            .size(width, height)
-    ) {
+    val (hours, minutes, seconds) = time
+    Canvas(modifier = modifier.size(clockSize)) {
         val radius = size.width * .5f
         drawCircle(
             color = color,

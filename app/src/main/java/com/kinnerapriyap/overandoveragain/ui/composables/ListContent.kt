@@ -1,8 +1,9 @@
 package com.kinnerapriyap.overandoveragain.ui.composables
 
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -30,14 +31,15 @@ import androidx.core.os.ConfigurationCompat
 import androidx.core.os.LocaleListCompat
 import com.kinnerapriyap.overandoveragain.ClickEvent
 import com.kinnerapriyap.overandoveragain.R
-import com.kinnerapriyap.overandoveragain.alarm.AlarmItem
+import com.kinnerapriyap.overandoveragain.RepeatingAlarmDisplayModel
 import java.text.SimpleDateFormat
+import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
 @Composable
 fun ListContent(
-    groupedAlarms: List<List<AlarmItem>>,
+    repeatingAlarms: List<RepeatingAlarmDisplayModel>,
     currentTime: Triple<Int, Int, Int>,
     modifier: Modifier = Modifier,
     onClick: (ClickEvent) -> Unit
@@ -62,10 +64,10 @@ fun ListContent(
                 .padding(horizontal = 16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Clock(currentTime = currentTime)
+            Clock(modifier = Modifier.padding(32.dp), time = currentTime)
             Spacer(modifier = Modifier.height(16.dp))
             HorizontalDivider()
-            if (groupedAlarms.isEmpty()) {
+            if (repeatingAlarms.isEmpty()) {
                 Text(
                     text = stringResource(R.string.no_alarms_yet),
                     modifier = Modifier.padding(32.dp),
@@ -73,15 +75,42 @@ fun ListContent(
                 )
             } else {
                 LazyColumn(contentPadding = PaddingValues(vertical = 16.dp)) {
-                    items(groupedAlarms) { group ->
-                        val times = group.map { it.time.convertToDisplayTime(locale = getLocale()) }
+                    items(repeatingAlarms) { group ->
+                        val startTime = group.startTime.convertToDisplayTime(locale = getLocale())
                         Card(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(vertical = 8.dp)
                         ) {
-                            Box(modifier = Modifier.padding(16.dp)) {
-                                Text(text = times.joinToString())
+                            Row(modifier = Modifier.padding(16.dp)) {
+                                Column(
+                                    modifier = Modifier.weight(1f),
+                                    verticalArrangement = Arrangement.Center
+                                ) {
+                                    Text(text = group.message)
+                                    Text(
+                                        text = startTime,
+                                        style = MaterialTheme.typography.headlineSmall
+                                    )
+                                    if (group.interval != null) {
+                                        Text(
+                                            text = stringResource(
+                                                R.string.alarm_interval_count,
+                                                group.count,
+                                                group.interval.toText()
+                                            )
+                                        )
+                                    }
+                                }
+                                Clock(
+                                    time = Triple(
+                                        group.startTime.get(Calendar.HOUR),
+                                        group.startTime.get(Calendar.MINUTE),
+                                        group.startTime.get(Calendar.SECOND)
+                                    ),
+                                    clockSize = 80.dp,
+                                    showSeconds = false
+                                )
                             }
                         }
                     }
@@ -93,6 +122,24 @@ fun ListContent(
 
 fun Long.convertToDisplayTime(pattern: String = "HH:mm:ss", locale: Locale): String =
     SimpleDateFormat(pattern, locale).format(Date(this))
+
+fun Calendar.convertToDisplayTime(pattern: String = "HH:mm", locale: Locale): String =
+    SimpleDateFormat(pattern, locale).format(Date(timeInMillis))
+
+fun Long.toText(): String {
+    val hours = this / 3600000
+    val minutes = this % 3600000 / 60000
+    val seconds = this % 60000 / 1000
+    return when {
+        hours == 0L && minutes == 0L -> "$seconds seconds"
+        hours == 0L && seconds == 0L -> "$minutes minutes"
+        hours == 0L -> "$minutes minutes $seconds seconds"
+        minutes == 0L && seconds == 0L -> "$hours hours"
+        minutes == 0L -> "$hours hours $seconds seconds"
+        seconds == 0L -> "$hours hours $minutes minutes"
+        else -> "$hours hours $minutes minutes $seconds seconds"
+    }
+}
 
 @Composable
 @ReadOnlyComposable

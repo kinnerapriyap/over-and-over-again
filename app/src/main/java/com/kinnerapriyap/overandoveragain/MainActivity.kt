@@ -36,11 +36,11 @@ class MainActivity : ComponentActivity() {
             OverandoveragainTheme {
                 NavHost(navController = navController, startDestination = Screen.List.route) {
                     composable(route = Screen.List.route) {
-                        val alarms by mainViewModel.groupedAlarms
+                        val alarms by mainViewModel.repeatingAlarms
                             .collectAsStateWithLifecycle(emptyList())
                         val currentTime by mainViewModel.currentTime.collectAsStateWithLifecycle()
                         ListContent(
-                            groupedAlarms = alarms,
+                            repeatingAlarms = alarms,
                             currentTime = currentTime,
                             onClick = { it.onClickEvent(navController) }
                         )

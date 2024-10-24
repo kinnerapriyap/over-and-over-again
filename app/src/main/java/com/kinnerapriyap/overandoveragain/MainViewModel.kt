@@ -20,7 +20,7 @@ import kotlin.collections.groupBy
 
 interface MainViewModel {
     val currentTime: StateFlow<Triple<Int, Int, Int>>
-    val groupedAlarms: Flow<List<List<AlarmItem>>>
+    val repeatingAlarms: Flow<List<RepeatingAlarmDisplayModel>>
     fun scheduleRepeatingAlarm(repeatingAlarmRequest: RepeatingAlarmRequest)
 }
 
@@ -47,9 +47,18 @@ class DefaultMainViewModel(
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    override val groupedAlarms: Flow<List<List<AlarmItem>>> = repository.alarms.mapLatest {
-        it.groupBy { it.repeatingAlarmId }.values.sortedBy { it[0].time }
-    }
+    override val repeatingAlarms: Flow<List<RepeatingAlarmDisplayModel>> =
+        repository.alarms.mapLatest { alarms ->
+            alarms.groupBy { it.repeatingAlarmId }.values.sortedBy { it[0].time }
+                .map { group ->
+                    RepeatingAlarmDisplayModel(
+                        startTime = Calendar.getInstance().apply { timeInMillis = group[0].time },
+                        interval = group.getOrNull(1)?.let { it.time - group[0].time },
+                        count = group.size,
+                        message = group[0].message
+                    )
+                }
+        }
 
     override fun scheduleRepeatingAlarm(repeatingAlarmRequest: RepeatingAlarmRequest) {
         viewModelScope.launch {
@@ -72,3 +81,10 @@ class DefaultMainViewModel(
         }
     }
 }
+
+data class RepeatingAlarmDisplayModel(
+    val startTime: Calendar,
+    val interval: Long?,
+    val count: Int,
+    val message: String,
+)
