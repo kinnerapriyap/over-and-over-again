@@ -10,51 +10,60 @@ import android.provider.Settings
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
-import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
+import androidx.navigation.NavType
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.kinnerapriyap.overandoveragain.alarm.RepeatingAlarmRequest
-import com.kinnerapriyap.overandoveragain.ui.composables.MainContent
+import com.kinnerapriyap.overandoveragain.ui.composables.AddAlarmsContent
+import com.kinnerapriyap.overandoveragain.ui.composables.ListContent
+import com.kinnerapriyap.overandoveragain.ui.composables.RepeatingAlarmContent
 import com.kinnerapriyap.overandoveragain.ui.theme.OverandoveragainTheme
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : ComponentActivity() {
-    private val alarmViewModel by viewModel<DefaultMainViewModel>()
+    private val mainViewModel by viewModel<DefaultMainViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            val repeatingAlarms by alarmViewModel.repeatingAlarms.collectAsStateWithLifecycle(
-                emptyList()
-            )
+            val navController = rememberNavController()
             OverandoveragainTheme {
-                Scaffold(
-                    modifier = Modifier.fillMaxSize(),
-                    floatingActionButton = {
-                        FloatingActionButton(onClick = {
-
-                        }) {
-                            Icon(
-                                imageVector = Icons.Filled.Add,
-                                contentDescription = stringResource(R.string.add_alarms)
-                            )
-                        }
+                NavHost(navController = navController, startDestination = Screen.List.route) {
+                    composable(route = Screen.List.route) {
+                        val alarms by mainViewModel.repeatingAlarms
+                            .collectAsStateWithLifecycle(emptyList())
+                        val currentTime by mainViewModel.currentTime.collectAsStateWithLifecycle()
+                        ListContent(
+                            alarms = alarms,
+                            currentTime = currentTime,
+                            onClick = { it.onClickEvent(navController) }
+                        )
                     }
-                ) { innerPadding ->
-                    MainContent(
-                        modifier = Modifier.padding(innerPadding),
-                        alarms = repeatingAlarms,
-                        onClick = { onClickEvent(it) }
-                    )
+                    composable(route = Screen.AddAlarms.route) {
+                        AddAlarmsContent(
+                            onClick = { it.onClickEvent(navController) }
+                        )
+                    }
+                    composable(
+                        route = Screen.RepeatingAlarm.route + "?id={$ARGUMENT_ID}",
+                        arguments = listOf(
+                            navArgument(ARGUMENT_ID) {
+                                type = NavType.StringType
+                                nullable = false
+                            }
+                        )
+                    ) {
+                        val id = it.arguments?.getString(ARGUMENT_ID) ?: ""
+                        RepeatingAlarmContent(
+                            onClick = { it.onClickEvent(navController) }
+                        )
+                    }
                 }
             }
         }
@@ -76,20 +85,31 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    private fun onClickEvent(clickEvent: ClickEvent) = when (clickEvent) {
+    private fun ClickEvent.onClickEvent(navController: NavController) = when (this) {
         is ClickEvent.ScheduleRepeatingAlarm -> {
             val repeatingAlarmRequest = RepeatingAlarmRequest(
-                time = clickEvent.time,
-                delay = clickEvent.delay,
-                count = clickEvent.count,
-                message = clickEvent.message
+                time = time,
+                delay = delay,
+                count = count,
+                message = message
             )
-            alarmViewModel.scheduleRepeatingAlarm(repeatingAlarmRequest)
+            mainViewModel.scheduleRepeatingAlarm(repeatingAlarmRequest)
         }
+
+        ClickEvent.AddAlarms -> navController.navigate(Screen.AddAlarms.route)
+
+        ClickEvent.Back -> navController.popBackStack()
     }
 }
 
 internal const val CHANNEL_ID = "alarm_id"
+internal const val ARGUMENT_ID = "id"
+
+sealed class Screen(val route: String) {
+    object List : Screen("list_screen")
+    object AddAlarms : Screen("add_alarms_screen")
+    object RepeatingAlarm : Screen("repeating_alarm_screen")
+}
 
 sealed interface ClickEvent {
     data class ScheduleRepeatingAlarm(
@@ -98,4 +118,8 @@ sealed interface ClickEvent {
         val count: Int,
         val message: String
     ) : ClickEvent
+
+    data object AddAlarms : ClickEvent
+
+    data object Back : ClickEvent
 }
