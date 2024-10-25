@@ -2,6 +2,7 @@ package com.kinnerapriyap.overandoveragain.ui.composables
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -19,7 +20,7 @@ import kotlin.math.sin
 fun Clock(
     time: Triple<Int, Int, Int>,
     modifier: Modifier = Modifier,
-    color: Color = Color.Black,
+    color: Color = MaterialTheme.colorScheme.onSurface,
     showSeconds: Boolean = true,
     clockSize: Dp = 200.dp,
 ) {
