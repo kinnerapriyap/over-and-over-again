@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -14,12 +15,14 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Card
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.Alignment
@@ -37,6 +40,7 @@ import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ListContent(
     repeatingAlarms: List<RepeatingAlarmDisplayModel>,
@@ -45,6 +49,7 @@ fun ListContent(
     onClick: (ClickEvent) -> Unit
 ) {
     Scaffold(
+        contentWindowInsets = WindowInsets(0.dp),
         modifier = Modifier.fillMaxSize(),
         floatingActionButton = {
             FloatingActionButton(onClick = {
@@ -55,6 +60,13 @@ fun ListContent(
                     contentDescription = stringResource(R.string.add_alarms)
                 )
             }
+        },
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(text = stringResource(R.string.app_name))
+                },
+            )
         },
     ) { innerPadding ->
         Column(
@@ -120,7 +132,7 @@ fun ListContent(
     }
 }
 
-fun Long.convertToDisplayTime(pattern: String = "HH:mm:ss", locale: Locale): String =
+fun Long.convertToDisplayTime(pattern: String = "HH:mm", locale: Locale): String =
     SimpleDateFormat(pattern, locale).format(Date(this))
 
 fun Calendar.convertToDisplayTime(pattern: String = "HH:mm", locale: Locale): String =

@@ -21,7 +21,7 @@ fun Clock(
     modifier: Modifier = Modifier,
     color: Color = Color.Black,
     showSeconds: Boolean = true,
-    clockSize: Dp = 300.dp,
+    clockSize: Dp = 200.dp,
 ) {
     val (hours, minutes, seconds) = time
     Canvas(modifier = modifier.size(clockSize)) {
