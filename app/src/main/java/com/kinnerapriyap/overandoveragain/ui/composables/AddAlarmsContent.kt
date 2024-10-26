@@ -29,9 +29,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.kinnerapriyap.overandoveragain.ClickEvent
 import com.kinnerapriyap.overandoveragain.R
+import com.kinnerapriyap.overandoveragain.utils.convertToDisplayTime
 import java.util.Calendar
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -152,4 +154,10 @@ fun AddAlarmsContent(
             }
         }
     }
+}
+
+@Preview
+@Composable
+fun AddAlarmsContentPreview() {
+    AddAlarmsContent(onClick = {})
 }

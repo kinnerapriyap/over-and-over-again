@@ -15,7 +15,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -34,9 +34,9 @@ import androidx.core.os.LocaleListCompat
 import com.kinnerapriyap.overandoveragain.ClickEvent
 import com.kinnerapriyap.overandoveragain.R
 import com.kinnerapriyap.overandoveragain.RepeatingAlarmDisplayModel
-import java.text.SimpleDateFormat
+import com.kinnerapriyap.overandoveragain.utils.convertToDisplayTime
+import com.kinnerapriyap.overandoveragain.utils.toText
 import java.util.Calendar
-import java.util.Date
 import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -50,14 +50,11 @@ fun ListContent(
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         floatingActionButton = {
-            FloatingActionButton(onClick = {
-                onClick(ClickEvent.AddAlarms)
-            }) {
-                Icon(
-                    imageVector = Icons.Filled.Add,
-                    contentDescription = stringResource(R.string.add_alarms)
-                )
-            }
+            ExtendedFloatingActionButton(
+                onClick = { onClick(ClickEvent.AddAlarms) },
+                icon = { Icon(imageVector = Icons.Filled.Add, null) },
+                text = { Text(text = stringResource(R.string.add_alarms)) }
+            )
         },
         topBar = {
             TopAppBar(
@@ -66,9 +63,6 @@ fun ListContent(
                 },
             )
         },
-        bottomBar = {
-
-        }
     ) { innerPadding ->
         Column(
             modifier = modifier
@@ -77,7 +71,7 @@ fun ListContent(
                 .padding(horizontal = 16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Clock(modifier = Modifier.padding(32.dp), time = currentTime)
+            Clock(modifier = Modifier.padding(16.dp), time = currentTime)
             Spacer(modifier = Modifier.height(16.dp))
             HorizontalDivider()
             if (repeatingAlarms.isEmpty()) {
@@ -130,27 +124,6 @@ fun ListContent(
                 }
             }
         }
-    }
-}
-
-fun Long.convertToDisplayTime(pattern: String = "HH:mm", locale: Locale): String =
-    SimpleDateFormat(pattern, locale).format(Date(this))
-
-fun Calendar.convertToDisplayTime(pattern: String = "HH:mm", locale: Locale): String =
-    SimpleDateFormat(pattern, locale).format(Date(timeInMillis))
-
-fun Long.toText(): String {
-    val hours = this / 3600000
-    val minutes = this % 3600000 / 60000
-    val seconds = this % 60000 / 1000
-    return when {
-        hours == 0L && minutes == 0L -> "$seconds seconds"
-        hours == 0L && seconds == 0L -> "$minutes minutes"
-        hours == 0L -> "$minutes minutes $seconds seconds"
-        minutes == 0L && seconds == 0L -> "$hours hours"
-        minutes == 0L -> "$hours hours $seconds seconds"
-        seconds == 0L -> "$hours hours $minutes minutes"
-        else -> "$hours hours $minutes minutes $seconds seconds"
     }
 }
 

@@ -14,7 +14,9 @@ import android.provider.Settings
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -40,7 +42,11 @@ class MainActivity : ComponentActivity() {
         setContent {
             val navController = rememberNavController()
             OverandoveragainTheme {
-                NavHost(navController = navController, startDestination = Screen.List.route) {
+                NavHost(
+                    modifier = Modifier.fillMaxSize(),
+                    navController = navController,
+                    startDestination = Screen.List.route,
+                ) {
                     composable(route = Screen.List.route) {
                         val alarms by mainViewModel.repeatingAlarms
                             .collectAsStateWithLifecycle(emptyList())
