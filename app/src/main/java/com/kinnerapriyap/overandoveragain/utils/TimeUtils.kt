@@ -1,5 +1,10 @@
 package com.kinnerapriyap.overandoveragain.utils
 
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ReadOnlyComposable
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.core.os.ConfigurationCompat
+import androidx.core.os.LocaleListCompat
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -24,4 +29,12 @@ fun Long.toText(): String {
         seconds == 0L -> "$hours hours $minutes minutes"
         else -> "$hours hours $minutes minutes $seconds seconds"
     }
+}
+
+@Composable
+@ReadOnlyComposable
+fun getLocale(): Locale {
+    val configuration = LocalConfiguration.current
+    return ConfigurationCompat.getLocales(configuration).get(0)
+        ?: LocaleListCompat.getDefault()[0]!!
 }

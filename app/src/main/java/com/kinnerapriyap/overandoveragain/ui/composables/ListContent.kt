@@ -23,21 +23,17 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.core.os.ConfigurationCompat
-import androidx.core.os.LocaleListCompat
 import com.kinnerapriyap.overandoveragain.ClickEvent
 import com.kinnerapriyap.overandoveragain.R
 import com.kinnerapriyap.overandoveragain.RepeatingAlarmDisplayModel
 import com.kinnerapriyap.overandoveragain.utils.convertToDisplayTime
+import com.kinnerapriyap.overandoveragain.utils.getLocale
 import com.kinnerapriyap.overandoveragain.utils.toText
 import java.util.Calendar
-import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -125,12 +121,4 @@ fun ListContent(
             }
         }
     }
-}
-
-@Composable
-@ReadOnlyComposable
-fun getLocale(): Locale {
-    val configuration = LocalConfiguration.current
-    return ConfigurationCompat.getLocales(configuration).get(0)
-        ?: LocaleListCompat.getDefault()[0]!!
 }
