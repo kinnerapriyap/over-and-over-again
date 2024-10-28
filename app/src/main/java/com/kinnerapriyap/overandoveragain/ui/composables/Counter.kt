@@ -26,8 +26,8 @@ import com.kinnerapriyap.overandoveragain.R
 @Composable
 fun Counter(
     title: String,
-    noOfAlarms: MutableIntState = remember { mutableIntStateOf(0) },
     modifier: Modifier = Modifier,
+    noOfAlarms: MutableIntState = remember { mutableIntStateOf(0) },
 ) {
     Row(
         modifier = modifier,
@@ -43,8 +43,8 @@ fun Counter(
 
 @Composable
 private fun CounterButton(
-    modifier: Modifier = Modifier,
     noOfAlarms: MutableIntState,
+    modifier: Modifier = Modifier,
 ) {
     Row(
         horizontalArrangement = Arrangement.Center,
@@ -74,6 +74,6 @@ private fun CounterButton(
 
 @Preview(showBackground = true)
 @Composable
-fun CounterPreview() {
+private fun CounterPreview() {
     Counter(title = "Counter")
 }

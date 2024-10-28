@@ -11,6 +11,8 @@ composeBom = "2024.10.00"
 roomVersion = "2.6.1"
 koinVersion = "3.2.0"
 navVersion = "2.8.3"
+composeLintVersion = "1.4.2"
+immutableVersion = "0.3.8"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -33,6 +35,8 @@ androidx-room-runtime = { group = "androidx.room", name = "room-runtime", versio
 androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "roomVersion" }
 androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "roomVersion" }
 koin-android = { group = "io.insert-koin", name = "koin-android", version.ref = "koinVersion" }
+slack-lint-compose = { group = "com.slack.lint.compose", name = "compose-lint-checks", version.ref = "composeLintVersion" }
+kotlinx-collections-immutable = { group = "org.jetbrains.kotlinx", name = "kotlinx-collections-immutable", version.ref = "immutableVersion" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

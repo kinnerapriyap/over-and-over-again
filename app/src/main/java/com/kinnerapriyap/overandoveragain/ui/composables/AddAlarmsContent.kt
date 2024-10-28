@@ -203,6 +203,6 @@ fun AddAlarmsContent(
 
 @Preview
 @Composable
-fun AddAlarmsContentPreview() {
+private fun AddAlarmsContentPreview() {
     AddAlarmsContent(onClick = {})
 }

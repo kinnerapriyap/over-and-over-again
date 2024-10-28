@@ -10,7 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.ui.Modifier
-import com.kinnerapriyap.overandoveragain.ui.theme.OverandoveragainTheme
+import com.kinnerapriyap.overandoveragain.ui.theme.OverAndOverAgainTheme
 
 class AlarmActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -19,7 +19,7 @@ class AlarmActivity : ComponentActivity() {
         setTurnScreenOn(true)
         enableEdgeToEdge()
         setContent {
-            OverandoveragainTheme {
+            OverAndOverAgainTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     Column(modifier = Modifier.padding(innerPadding)) {
                         Text("The alarm worked!")

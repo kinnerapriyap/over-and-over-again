@@ -46,7 +46,9 @@ dependencies {
     implementation(libs.koin.android)
     implementation(libs.androidx.room.ktx)
     implementation(libs.androidx.room.runtime)
+    implementation(libs.kotlinx.collections.immutable)
     ksp(libs.androidx.room.compiler)
+    lintChecks(libs.slack.lint.compose)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

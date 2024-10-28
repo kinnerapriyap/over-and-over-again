@@ -7,7 +7,7 @@
     <string name="clear">Clear</string>
     <string name="add_alarms">Add alarms</string>
     <string name="no_alarms_yet">No alarms yet.</string>
-    <string name="alarm_interval_count">%d alarms every %s</string>
+    <string name="alarm_interval_count">%1$d alarms every %2$s</string>
     <string name="decrease_count">Decrease count</string>
     <string name="increase_count">Increase count</string>
     <string name="number_of_alarms">Number of alarms</string>

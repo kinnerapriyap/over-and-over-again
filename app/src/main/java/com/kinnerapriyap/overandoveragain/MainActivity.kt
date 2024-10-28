@@ -30,7 +30,8 @@ import com.kinnerapriyap.overandoveragain.alarm.RepeatingAlarmRequest
 import com.kinnerapriyap.overandoveragain.ui.composables.AddAlarmsContent
 import com.kinnerapriyap.overandoveragain.ui.composables.ListContent
 import com.kinnerapriyap.overandoveragain.ui.composables.RepeatingAlarmContent
-import com.kinnerapriyap.overandoveragain.ui.theme.OverandoveragainTheme
+import com.kinnerapriyap.overandoveragain.ui.theme.OverAndOverAgainTheme
+import kotlinx.collections.immutable.toImmutableList
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : ComponentActivity() {
@@ -41,7 +42,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             val navController = rememberNavController()
-            OverandoveragainTheme {
+            OverAndOverAgainTheme {
                 NavHost(
                     modifier = Modifier.fillMaxSize(),
                     navController = navController,
@@ -52,7 +53,7 @@ class MainActivity : ComponentActivity() {
                             .collectAsStateWithLifecycle(emptyList())
                         val currentTime by mainViewModel.currentTime.collectAsStateWithLifecycle()
                         ListContent(
-                            repeatingAlarms = alarms,
+                            repeatingAlarms = alarms.toImmutableList(),
                             currentTime = currentTime,
                             onClick = { it.onClickEvent(navController) }
                         )

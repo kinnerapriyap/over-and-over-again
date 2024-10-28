@@ -33,12 +33,13 @@ import com.kinnerapriyap.overandoveragain.RepeatingAlarmDisplayModel
 import com.kinnerapriyap.overandoveragain.utils.convertToDisplayTime
 import com.kinnerapriyap.overandoveragain.utils.getLocale
 import com.kinnerapriyap.overandoveragain.utils.toTimeText
+import kotlinx.collections.immutable.ImmutableList
 import java.util.Calendar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ListContent(
-    repeatingAlarms: List<RepeatingAlarmDisplayModel>,
+    repeatingAlarms: ImmutableList<RepeatingAlarmDisplayModel>,
     currentTime: Triple<Int, Int, Int>,
     modifier: Modifier = Modifier,
     onClick: (ClickEvent) -> Unit
