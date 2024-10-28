@@ -1,24 +1,33 @@
 package com.kinnerapriyap.overandoveragain.ui.composables
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.outlined.DateRange
 import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MenuAnchorType.Companion.PrimaryNotEditable
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -30,8 +39,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.kinnerapriyap.overandoveragain.ClickEvent
 import com.kinnerapriyap.overandoveragain.R
+import com.kinnerapriyap.overandoveragain.utils.DEFAULT_DELAY
+import com.kinnerapriyap.overandoveragain.utils.IntervalType
 import com.kinnerapriyap.overandoveragain.utils.convertToDisplayTime
 import com.kinnerapriyap.overandoveragain.utils.getLocale
+import com.kinnerapriyap.overandoveragain.utils.toTimeNumber
 import java.util.Calendar
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -51,9 +63,12 @@ fun AddAlarmsContent(
             }
         )
     }
-    var delayText by remember { mutableStateOf("5") }
-    var noOfAlarms by remember { mutableStateOf("3") }
-    var messageText by remember { mutableStateOf("What will I do?") }
+    var delayTimeInMillis by remember { mutableLongStateOf(DEFAULT_DELAY) }
+    var noOfAlarms = remember { mutableIntStateOf(3) }
+    var messageText by remember { mutableStateOf("~") }
+    val options = IntervalType.entries
+    var intervalTypeExpanded by remember { mutableStateOf(false) }
+    var intervalType by remember { mutableStateOf(options[0]) }
     if (openTimePickerDialog) {
         TimePickerDial(
             time = startTime,
@@ -88,8 +103,8 @@ fun AddAlarmsContent(
                         onClick(
                             ClickEvent.ScheduleRepeatingAlarm(
                                 startTime.timeInMillis,
-                                delayText.toLong() * 1000,
-                                noOfAlarms.toInt(),
+                                delayTimeInMillis,
+                                noOfAlarms.intValue.toInt(),
                                 messageText
                             )
                         )
@@ -117,7 +132,7 @@ fun AddAlarmsContent(
             OutlinedTextField(
                 value = startTime.timeInMillis.convertToDisplayTime(locale = getLocale()),
                 onValueChange = { },
-                label = { Text(text = "Start time") },
+                label = { Text(text = stringResource(R.string.start_time)) },
                 readOnly = true,
                 trailingIcon = {
                     IconButton(onClick = { openTimePickerDialog = true }) {
@@ -129,26 +144,59 @@ fun AddAlarmsContent(
                 }
             )
             Spacer(modifier = Modifier.height(8.dp))
-            OutlinedTextField(
-                value = delayText,
-                onValueChange = { delayText = it },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                label = { Text(text = "Delay Second") }
-            )
+            Row(verticalAlignment = Alignment.Bottom) {
+                OutlinedTextField(
+                    modifier = Modifier.width(136.dp),
+                    value = delayTimeInMillis.toTimeNumber(intervalType).toString(),
+                    onValueChange = { delayTimeInMillis = it.toLong() * intervalType.millis },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    label = { Text(text = stringResource(R.string.interval)) }
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                ExposedDropdownMenuBox(
+                    modifier = Modifier.width(136.dp),
+                    expanded = intervalTypeExpanded,
+                    onExpandedChange = { intervalTypeExpanded = it },
+                ) {
+                    TextField(
+                        modifier = Modifier.menuAnchor(PrimaryNotEditable),
+                        readOnly = true,
+                        value = intervalType.name,
+                        onValueChange = { },
+                        trailingIcon = {
+                            ExposedDropdownMenuDefaults.TrailingIcon(
+                                expanded = intervalTypeExpanded
+                            )
+                        },
+                        colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors()
+                    )
+                    ExposedDropdownMenu(
+                        expanded = intervalTypeExpanded,
+                        onDismissRequest = { intervalTypeExpanded = false }
+                    ) {
+                        options.forEach { type ->
+                            DropdownMenuItem(
+                                onClick = {
+                                    intervalType = type
+                                    intervalTypeExpanded = false
+                                },
+                                text = { Text(type.name) },
+                            )
+                        }
+                    }
+                }
+            }
             Spacer(modifier = Modifier.height(8.dp))
-            OutlinedTextField(
-                value = noOfAlarms,
-                onValueChange = { noOfAlarms = it },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                label = { Text(text = "Number of alarms") }
+            Counter(
+                title = stringResource(R.string.number_of_alarms),
+                noOfAlarms = noOfAlarms
             )
             Spacer(modifier = Modifier.height(8.dp))
             OutlinedTextField(
                 value = messageText,
                 onValueChange = { messageText = it },
-                label = { Text(text = "Message") }
+                label = { Text(text = stringResource(R.string.alarm_message)) },
             )
-            Spacer(modifier = Modifier.height(8.dp))
         }
     }
 }

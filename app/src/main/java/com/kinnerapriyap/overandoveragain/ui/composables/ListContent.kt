@@ -32,7 +32,7 @@ import com.kinnerapriyap.overandoveragain.R
 import com.kinnerapriyap.overandoveragain.RepeatingAlarmDisplayModel
 import com.kinnerapriyap.overandoveragain.utils.convertToDisplayTime
 import com.kinnerapriyap.overandoveragain.utils.getLocale
-import com.kinnerapriyap.overandoveragain.utils.toText
+import com.kinnerapriyap.overandoveragain.utils.toTimeText
 import java.util.Calendar
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -100,7 +100,7 @@ fun ListContent(
                                             text = stringResource(
                                                 R.string.alarm_interval_count,
                                                 group.count,
-                                                group.interval.toText()
+                                                group.interval.toTimeText()
                                             )
                                         )
                                     }

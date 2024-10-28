@@ -10,13 +10,27 @@ import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
+const val MINUTE_MILLIS = 60 * 1000L
+const val HOUR_MILLIS = 60 * 60 * 1000L
+const val DEFAULT_DELAY = 5 * MINUTE_MILLIS
+
+enum class IntervalType(val millis: Long) {
+    Minutes(MINUTE_MILLIS),
+    Hours(HOUR_MILLIS)
+}
+
 fun Long.convertToDisplayTime(pattern: String = "HH:mm", locale: Locale): String =
     SimpleDateFormat(pattern, locale).format(Date(this))
 
 fun Calendar.convertToDisplayTime(pattern: String = "HH:mm", locale: Locale): String =
     SimpleDateFormat(pattern, locale).format(Date(timeInMillis))
 
-fun Long.toText(): String {
+fun Long.toTimeNumber(intervalType: IntervalType): Long = when (intervalType) {
+    IntervalType.Minutes -> this / MINUTE_MILLIS
+    IntervalType.Hours -> this / HOUR_MILLIS
+}
+
+fun Long.toTimeText(): String {
     val hours = this / 3600000
     val minutes = this % 3600000 / 60000
     val seconds = this % 60000 / 1000
