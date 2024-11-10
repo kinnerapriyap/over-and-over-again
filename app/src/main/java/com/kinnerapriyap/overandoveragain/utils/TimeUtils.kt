@@ -11,7 +11,8 @@ import java.util.Date
 import java.util.Locale
 
 const val MINUTE_MILLIS = 60 * 1000L
-const val HOUR_MILLIS = 60 * 60 * 1000L
+const val HOUR_MILLIS = 60 * MINUTE_MILLIS
+const val DAY_MILLIS = 24 * HOUR_MILLIS
 const val DEFAULT_DELAY = 5
 
 enum class IntervalType(val millis: Long) {

@@ -39,6 +39,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.kinnerapriyap.overandoveragain.ClickEvent
 import com.kinnerapriyap.overandoveragain.R
+import com.kinnerapriyap.overandoveragain.utils.DAY_MILLIS
 import com.kinnerapriyap.overandoveragain.utils.DEFAULT_DELAY
 import com.kinnerapriyap.overandoveragain.utils.IntervalType
 import com.kinnerapriyap.overandoveragain.utils.convertToDisplayTime
@@ -101,9 +102,14 @@ fun AddAlarmsContent(
                 },
                 actions = {
                     IconButton(onClick = {
+                        val startInMillis = if (startTime.before(Calendar.getInstance())) {
+                            startTime.timeInMillis + DAY_MILLIS
+                        } else {
+                            startTime.timeInMillis
+                        }
                         onClick(
                             ClickEvent.ScheduleRepeatingAlarm(
-                                time = startTime.timeInMillis,
+                                time = startInMillis,
                                 delay = (delayTime.toLongOrNull() ?: 0) * intervalType.millis,
                                 count = noOfAlarms.intValue.toInt(),
                                 message = messageText

@@ -83,7 +83,7 @@ fun ListContent(
             } else {
                 LazyColumn(contentPadding = PaddingValues(vertical = 16.dp)) {
                     items(repeatingAlarms) { group ->
-                        val startTime = group.startTime.convertToDisplayTime(locale = getLocale())
+                        val startTime = group.startTime.convertToDisplayTime(pattern = "HH:mm EE", locale = getLocale())
                         Card(
                             modifier = Modifier
                                 .fillMaxWidth()
