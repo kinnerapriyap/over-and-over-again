@@ -102,10 +102,10 @@ fun AddAlarmsContent(
                 },
                 actions = {
                     IconButton(onClick = {
-                        val startInMillis = if (startTime.before(Calendar.getInstance())) {
-                            startTime.timeInMillis + DAY_MILLIS
-                        } else {
+                        val startInMillis = if (startTime.after(Calendar.getInstance())) {
                             startTime.timeInMillis
+                        } else {
+                            startTime.timeInMillis + DAY_MILLIS
                         }
                         onClick(
                             ClickEvent.ScheduleRepeatingAlarm(
