@@ -27,7 +27,6 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -43,7 +42,6 @@ import com.kinnerapriyap.overandoveragain.utils.DEFAULT_DELAY
 import com.kinnerapriyap.overandoveragain.utils.IntervalType
 import com.kinnerapriyap.overandoveragain.utils.convertToDisplayTime
 import com.kinnerapriyap.overandoveragain.utils.getLocale
-import com.kinnerapriyap.overandoveragain.utils.toTimeNumber
 import java.util.Calendar
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -63,7 +61,7 @@ fun AddAlarmsContent(
             }
         )
     }
-    var delayTimeInMillis by remember { mutableLongStateOf(DEFAULT_DELAY) }
+    var delayTime by remember { mutableStateOf(DEFAULT_DELAY.toString()) }
     var noOfAlarms = remember { mutableIntStateOf(3) }
     var messageText by remember { mutableStateOf("~") }
     val options = IntervalType.entries
@@ -88,7 +86,7 @@ fun AddAlarmsContent(
         topBar = {
             CenterAlignedTopAppBar(
                 title = {
-                    Text(text = stringResource(R.string.add_alarms))
+                    Text(text = stringResource(R.string.add_repeating_alarms))
                 },
                 navigationIcon = {
                     IconButton(onClick = { onClick(ClickEvent.Back) }) {
@@ -102,10 +100,10 @@ fun AddAlarmsContent(
                     IconButton(onClick = {
                         onClick(
                             ClickEvent.ScheduleRepeatingAlarm(
-                                startTime.timeInMillis,
-                                delayTimeInMillis,
-                                noOfAlarms.intValue.toInt(),
-                                messageText
+                                time = startTime.timeInMillis,
+                                delay = (delayTime.toLongOrNull() ?: 0) * intervalType.millis,
+                                count = noOfAlarms.intValue.toInt(),
+                                message = messageText
                             )
                         )
                     }) {
@@ -147,8 +145,8 @@ fun AddAlarmsContent(
             Row(verticalAlignment = Alignment.Bottom) {
                 OutlinedTextField(
                     modifier = Modifier.width(136.dp),
-                    value = delayTimeInMillis.toTimeNumber(intervalType).toString(),
-                    onValueChange = { delayTimeInMillis = it.toLong() * intervalType.millis },
+                    value = delayTime,
+                    onValueChange = { delayTime = it },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     label = { Text(text = stringResource(R.string.interval)) }
                 )

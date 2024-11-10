@@ -12,7 +12,7 @@ import java.util.Locale
 
 const val MINUTE_MILLIS = 60 * 1000L
 const val HOUR_MILLIS = 60 * 60 * 1000L
-const val DEFAULT_DELAY = 5 * MINUTE_MILLIS
+const val DEFAULT_DELAY = 5
 
 enum class IntervalType(val millis: Long) {
     Minutes(MINUTE_MILLIS),
@@ -24,11 +24,6 @@ fun Long.convertToDisplayTime(pattern: String = "HH:mm", locale: Locale): String
 
 fun Calendar.convertToDisplayTime(pattern: String = "HH:mm", locale: Locale): String =
     SimpleDateFormat(pattern, locale).format(Date(timeInMillis))
-
-fun Long.toTimeNumber(intervalType: IntervalType): Long = when (intervalType) {
-    IntervalType.Minutes -> this / MINUTE_MILLIS
-    IntervalType.Hours -> this / HOUR_MILLIS
-}
 
 fun Long.toTimeText(): String {
     val hours = this / 3600000

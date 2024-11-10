@@ -50,7 +50,7 @@ fun ListContent(
             ExtendedFloatingActionButton(
                 onClick = { onClick(ClickEvent.AddAlarms) },
                 icon = { Icon(imageVector = Icons.Filled.Add, null) },
-                text = { Text(text = stringResource(R.string.add_alarms)) }
+                text = { Text(text = stringResource(R.string.add_repeating_alarms)) }
             )
         },
         topBar = {
