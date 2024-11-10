@@ -194,13 +194,6 @@ sealed class Screen(val route: String, @StringRes val titleId: Int) {
     object RepeatingAlarm : Screen("repeating_alarm_screen", R.string.your_alarm)
 }
 
-fun String.toScreen(): Screen = when (this) {
-    Screen.List.route -> Screen.List
-    Screen.AddAlarms.route -> Screen.AddAlarms
-    Screen.RepeatingAlarm.route -> Screen.RepeatingAlarm
-    else -> throw IllegalArgumentException("Route $this is not recognized.")
-}
-
 sealed interface ClickEvent {
     data class ScheduleRepeatingAlarm(
         val time: Long,
