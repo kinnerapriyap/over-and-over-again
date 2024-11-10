@@ -14,7 +14,17 @@ import android.provider.Settings
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.annotation.StringRes
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.core.EaseIn
+import androidx.compose.animation.core.EaseOut
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.core.app.ActivityCompat
@@ -37,45 +47,93 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 class MainActivity : ComponentActivity() {
     private val mainViewModel by viewModel<DefaultMainViewModel>()
 
+    @OptIn(ExperimentalMaterial3Api::class)
+    @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             val navController = rememberNavController()
             OverAndOverAgainTheme {
-                NavHost(
-                    modifier = Modifier.fillMaxSize(),
-                    navController = navController,
-                    startDestination = Screen.List.route,
-                ) {
-                    composable(route = Screen.List.route) {
-                        val alarms by mainViewModel.repeatingAlarms
-                            .collectAsStateWithLifecycle(emptyList())
-                        val currentTime by mainViewModel.currentTime.collectAsStateWithLifecycle()
-                        ListContent(
-                            repeatingAlarms = alarms.toImmutableList(),
-                            currentTime = currentTime,
-                            onClick = { it.onClickEvent(navController) }
-                        )
-                    }
-                    composable(route = Screen.AddAlarms.route) {
-                        AddAlarmsContent(
-                            onClick = { it.onClickEvent(navController) }
-                        )
-                    }
-                    composable(
-                        route = Screen.RepeatingAlarm.route + "?id={$ARGUMENT_ID}",
-                        arguments = listOf(
-                            navArgument(ARGUMENT_ID) {
-                                type = NavType.StringType
-                                nullable = false
-                            }
-                        )
+                Scaffold { innerPadding ->
+                    NavHost(
+                        modifier = Modifier.fillMaxSize(),
+                        navController = navController,
+                        startDestination = Screen.List.route,
+                        enterTransition = {
+                            fadeIn(
+                                animationSpec = tween(
+                                    durationMillis = 300,
+                                    easing = LinearEasing
+                                )
+                            ) + slideIntoContainer(
+                                animationSpec = tween(300, easing = EaseIn),
+                                towards = AnimatedContentTransitionScope.SlideDirection.Start
+                            )
+                        },
+                        exitTransition = {
+                            fadeOut(
+                                animationSpec = tween(
+                                    durationMillis = 300,
+                                    easing = LinearEasing
+                                )
+                            ) + slideOutOfContainer(
+                                animationSpec = tween(300, easing = EaseOut),
+                                towards = AnimatedContentTransitionScope.SlideDirection.End
+                            )
+                        },
+                        popEnterTransition = {
+                            fadeIn(
+                                animationSpec = tween(
+                                    durationMillis = 300,
+                                    easing = LinearEasing
+                                )
+                            ) + slideIntoContainer(
+                                animationSpec = tween(300, easing = EaseIn),
+                                towards = AnimatedContentTransitionScope.SlideDirection.End
+                            )
+                        },
+                        popExitTransition = {
+                            fadeOut(
+                                animationSpec = tween(
+                                    durationMillis = 300,
+                                    easing = LinearEasing
+                                )
+                            ) + slideOutOfContainer(
+                                animationSpec = tween(300, easing = EaseOut),
+                                towards = AnimatedContentTransitionScope.SlideDirection.Start
+                            )
+                        }
                     ) {
-                        val id = it.arguments?.getString(ARGUMENT_ID) ?: ""
-                        RepeatingAlarmContent(
-                            onClick = { it.onClickEvent(navController) }
-                        )
+                        composable(route = Screen.List.route) {
+                            val alarms by mainViewModel.repeatingAlarms
+                                .collectAsStateWithLifecycle(emptyList())
+                            val currentTime by mainViewModel.currentTime.collectAsStateWithLifecycle()
+                            ListContent(
+                                repeatingAlarms = alarms.toImmutableList(),
+                                currentTime = currentTime,
+                                onClick = { it.onClickEvent(navController) }
+                            )
+                        }
+                        composable(route = Screen.AddAlarms.route) {
+                            AddAlarmsContent(
+                                onClick = { it.onClickEvent(navController) }
+                            )
+                        }
+                        composable(
+                            route = Screen.RepeatingAlarm.route + "?id={$ARGUMENT_ID}",
+                            arguments = listOf(
+                                navArgument(ARGUMENT_ID) {
+                                    type = NavType.StringType
+                                    nullable = false
+                                }
+                            )
+                        ) {
+                            val id = it.arguments?.getString(ARGUMENT_ID) ?: ""
+                            RepeatingAlarmContent(
+                                onClick = { it.onClickEvent(navController) }
+                            )
+                        }
                     }
                 }
             }
@@ -130,10 +188,17 @@ class MainActivity : ComponentActivity() {
 internal const val CHANNEL_ID = "alarm_id"
 internal const val ARGUMENT_ID = "id"
 
-sealed class Screen(val route: String) {
-    object List : Screen("list_screen")
-    object AddAlarms : Screen("add_alarms_screen")
-    object RepeatingAlarm : Screen("repeating_alarm_screen")
+sealed class Screen(val route: String, @StringRes val titleId: Int) {
+    object List : Screen("list_screen", R.string.app_name)
+    object AddAlarms : Screen("add_alarms_screen", R.string.add_repeating_alarms)
+    object RepeatingAlarm : Screen("repeating_alarm_screen", R.string.your_alarm)
+}
+
+fun String.toScreen(): Screen = when (this) {
+    Screen.List.route -> Screen.List
+    Screen.AddAlarms.route -> Screen.AddAlarms
+    Screen.RepeatingAlarm.route -> Screen.RepeatingAlarm
+    else -> throw IllegalArgumentException("Route $this is not recognized.")
 }
 
 sealed interface ClickEvent {

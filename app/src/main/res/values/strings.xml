@@ -6,6 +6,7 @@
     <string name="dismiss">Dismiss</string>
     <string name="clear">Clear</string>
     <string name="add_repeating_alarms">Add repeating alarms</string>
+    <string name="your_alarm">Your alarm!</string>
     <string name="no_alarms_yet">No alarms yet.</string>
     <string name="alarm_interval_count">%1$d alarms every %2$s</string>
     <string name="decrease_count">Decrease count</string>
