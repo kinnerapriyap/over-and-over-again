@@ -5,7 +5,9 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.Service
 import android.content.Intent
+import android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_SYSTEM_EXEMPTED
 import android.media.RingtoneManager
+import android.os.Build
 import android.os.IBinder
 import android.widget.Toast
 import android.widget.Toast.LENGTH_SHORT
@@ -31,7 +33,11 @@ class AlarmService : Service() {
             val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
             val notification = createNotification(message)
             notificationManager.notify(requestCode, notification)
-            startForeground(requestCode, notification)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+                startForeground(requestCode, notification, FOREGROUND_SERVICE_TYPE_SYSTEM_EXEMPTED)
+            } else {
+                startForeground(requestCode, notification)
+            }
         } else {
             Toast.makeText(this, "No action", LENGTH_SHORT).show()
         }
