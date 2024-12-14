@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Clear
@@ -33,8 +32,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.kinnerapriyap.overandoveragain.ClickEvent
@@ -63,7 +62,7 @@ fun AddAlarmsContent(
             }
         )
     }
-    var delayTime by remember { mutableStateOf(DEFAULT_DELAY.toString()) }
+    var delayTime = remember { mutableIntStateOf(DEFAULT_DELAY) }
     var noOfAlarms = remember { mutableIntStateOf(3) }
     var messageText by remember { mutableStateOf("~") }
     val options = IntervalType.entries
@@ -110,7 +109,7 @@ fun AddAlarmsContent(
                         onClick(
                             ClickEvent.ScheduleRepeatingAlarm(
                                 time = startInMillis,
-                                delay = (delayTime.toLongOrNull() ?: 0) * intervalType.millis,
+                                delay = delayTime.intValue * intervalType.millis,
                                 count = noOfAlarms.intValue.toInt(),
                                 message = messageText
                             )
@@ -151,16 +150,17 @@ fun AddAlarmsContent(
                 }
             )
             Spacer(modifier = Modifier.height(8.dp))
-            Row(verticalAlignment = Alignment.Bottom) {
-                OutlinedTextField(
-                    modifier = Modifier.width(136.dp),
-                    value = delayTime,
-                    onValueChange = { delayTime = it },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                    singleLine = true,
-                    label = { Text(text = stringResource(R.string.interval)) }
-                )
-                Spacer(modifier = Modifier.width(8.dp))
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(text = stringResource(R.string.i_need))
+                CounterButton(value = noOfAlarms, modifier = Modifier.padding(16.dp))
+                Text(text = stringResource(R.string.alarms))
+            }
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(text = stringResource(R.string.every))
+            Spacer(modifier = Modifier.height(12.dp))
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                CounterButton(value = delayTime)
+                Spacer(modifier = Modifier.width(16.dp))
                 ExposedDropdownMenuBox(
                     modifier = Modifier.width(136.dp),
                     expanded = intervalTypeExpanded,
@@ -169,7 +169,7 @@ fun AddAlarmsContent(
                     TextField(
                         modifier = Modifier.menuAnchor(PrimaryNotEditable),
                         readOnly = true,
-                        value = intervalType.name,
+                        value = pluralStringResource(intervalType.stringRes, delayTime.intValue),
                         onValueChange = { },
                         trailingIcon = {
                             ExposedDropdownMenuDefaults.TrailingIcon(
@@ -188,18 +188,20 @@ fun AddAlarmsContent(
                                     intervalType = type
                                     intervalTypeExpanded = false
                                 },
-                                text = { Text(type.name) },
+                                text = {
+                                    Text(
+                                        pluralStringResource(
+                                            type.stringRes,
+                                            delayTime.intValue
+                                        )
+                                    )
+                                },
                             )
                         }
                     }
                 }
             }
-            Spacer(modifier = Modifier.height(8.dp))
-            Counter(
-                title = stringResource(R.string.number_of_alarms),
-                noOfAlarms = noOfAlarms
-            )
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(16.dp))
             OutlinedTextField(
                 value = messageText,
                 onValueChange = { messageText = it },

@@ -5,6 +5,7 @@ import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.core.os.ConfigurationCompat
 import androidx.core.os.LocaleListCompat
+import com.kinnerapriyap.overandoveragain.R
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -15,9 +16,9 @@ const val HOUR_MILLIS = 60 * MINUTE_MILLIS
 const val DAY_MILLIS = 24 * HOUR_MILLIS
 const val DEFAULT_DELAY = 5
 
-enum class IntervalType(val millis: Long) {
-    Minutes(MINUTE_MILLIS),
-    Hours(HOUR_MILLIS)
+enum class IntervalType(val millis: Long, val stringRes: Int) {
+    Minutes(MINUTE_MILLIS, R.plurals.minutes),
+    Hours(HOUR_MILLIS, R.plurals.hours),
 }
 
 fun Long.convertToDisplayTime(pattern: String = "HH:mm", locale: Locale): String =

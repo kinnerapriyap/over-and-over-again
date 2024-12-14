@@ -24,46 +24,26 @@ import androidx.compose.ui.unit.dp
 import com.kinnerapriyap.overandoveragain.R
 
 @Composable
-fun Counter(
-    title: String,
-    modifier: Modifier = Modifier,
-    noOfAlarms: MutableIntState = remember { mutableIntStateOf(0) },
-) {
-    Row(
-        modifier = modifier,
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Text(
-            text = title,
-            modifier = Modifier.padding(16.dp)
-        )
-        CounterButton(noOfAlarms = noOfAlarms)
-    }
-}
-
-@Composable
-private fun CounterButton(
-    noOfAlarms: MutableIntState,
+internal fun CounterButton(
+    value: MutableIntState,
     modifier: Modifier = Modifier,
 ) {
     Row(
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier
-            .padding(16.dp)
-            .border(0.5.dp, MaterialTheme.colorScheme.onSurface, CircleShape)
+        modifier = modifier.border(0.5.dp, MaterialTheme.colorScheme.onSurface, CircleShape)
     ) {
-        IconButton(onClick = { noOfAlarms.intValue-- }) {
+        IconButton(onClick = { value.intValue-- }) {
             Icon(
                 imageVector = Icons.Filled.Remove,
                 contentDescription = stringResource(R.string.decrease_count)
             )
         }
         Text(
-            text = noOfAlarms.intValue.toString(),
-            modifier = Modifier.padding(horizontal = 16.dp)
+            text = value.intValue.toString(),
+            modifier = Modifier.padding(horizontal = 8.dp)
         )
-        IconButton(onClick = { noOfAlarms.intValue++ }) {
+        IconButton(onClick = { value.intValue++ }) {
             Icon(
                 imageVector = Icons.Filled.Add,
                 contentDescription = stringResource(R.string.increase_count)
@@ -74,6 +54,6 @@ private fun CounterButton(
 
 @Preview(showBackground = true)
 @Composable
-private fun CounterPreview() {
-    Counter(title = "Counter")
+private fun CounterButtonPreview() {
+    CounterButton(remember { mutableIntStateOf(0) })
 }
