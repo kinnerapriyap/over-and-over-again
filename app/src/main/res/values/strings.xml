@@ -14,9 +14,11 @@
     <string name="i_need">I need</string>
     <string name="alarms">alarms</string>
     <string name="every">every</string>
+    <string name="from">from</string>
     <string name="alarm_message">What will I do?</string>
     <string name="interval">Interval</string>
-    <string name="start_time">Start time</string>
+    <string name="start_time">What time?</string>
+    <string name="start_date">What date?</string>
     <plurals name="minutes">
         <item quantity="one">minute</item>
         <item quantity="other">minutes</item>

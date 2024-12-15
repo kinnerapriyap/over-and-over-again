@@ -1,5 +1,6 @@
 package com.kinnerapriyap.overandoveragain.ui.composables
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -11,6 +12,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.outlined.AccessTime
 import androidx.compose.material.icons.outlined.DateRange
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.DropdownMenuItem
@@ -22,6 +24,9 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MenuAnchorType.Companion.PrimaryNotEditable
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SegmentedButton
+import androidx.compose.material3.SegmentedButtonDefaults
+import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -52,6 +57,7 @@ fun AddAlarmsContent(
     onClick: (ClickEvent) -> Unit
 ) {
     var openTimePickerDialog by remember { mutableStateOf(false) }
+    var openDatePickerDialog by remember { mutableStateOf(false) }
     var startTime by remember {
         mutableStateOf(
             Calendar.getInstance().apply {
@@ -65,9 +71,11 @@ fun AddAlarmsContent(
     var delayTime = remember { mutableIntStateOf(DEFAULT_DELAY) }
     var noOfAlarms = remember { mutableIntStateOf(3) }
     var messageText by remember { mutableStateOf("~") }
-    val options = IntervalType.entries
+    val intervalOptions = IntervalType.entries
     var intervalTypeExpanded by remember { mutableStateOf(false) }
-    var intervalType by remember { mutableStateOf(options[0]) }
+    var intervalType by remember { mutableStateOf(intervalOptions[0]) }
+    val dateOptions = listOf("Today", "Tomorrow", "Other")
+    var selectedDateIndex by remember { mutableIntStateOf(0) }
     if (openTimePickerDialog) {
         TimePickerDial(
             time = startTime,
@@ -79,6 +87,24 @@ fun AddAlarmsContent(
                 openTimePickerDialog = false
             }, onDismiss = {
                 openTimePickerDialog = false
+            }
+        )
+    }
+    if (openDatePickerDialog) {
+        DatePickerDial(
+            time = startTime,
+            onConfirm = {
+                val date = Calendar.getInstance().apply {
+                    timeInMillis = it.selectedDateMillis!!
+                }
+                startTime = startTime.apply {
+                    set(Calendar.YEAR, date.get(Calendar.YEAR))
+                    set(Calendar.MONTH, date.get(Calendar.MONTH))
+                    set(Calendar.DAY_OF_MONTH, date.get(Calendar.DAY_OF_MONTH))
+                }
+                openDatePickerDialog = false
+            }, onDismiss = {
+                openDatePickerDialog = false
             }
         )
     }
@@ -135,21 +161,6 @@ fun AddAlarmsContent(
                 time = Triple(startTime.get(Calendar.HOUR), startTime.get(Calendar.MINUTE), 0),
                 showSeconds = false
             )
-            OutlinedTextField(
-                value = startTime.timeInMillis.convertToDisplayTime(locale = getLocale()),
-                onValueChange = { },
-                label = { Text(text = stringResource(R.string.start_time)) },
-                readOnly = true,
-                trailingIcon = {
-                    IconButton(onClick = { openTimePickerDialog = true }) {
-                        Icon(
-                            imageVector = Icons.Outlined.DateRange,
-                            contentDescription = null,
-                        )
-                    }
-                }
-            )
-            Spacer(modifier = Modifier.height(8.dp))
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(text = stringResource(R.string.i_need))
                 CounterButton(value = noOfAlarms, modifier = Modifier.padding(16.dp))
@@ -182,7 +193,7 @@ fun AddAlarmsContent(
                         expanded = intervalTypeExpanded,
                         onDismissRequest = { intervalTypeExpanded = false }
                     ) {
-                        options.forEach { type ->
+                        intervalOptions.forEach { type ->
                             DropdownMenuItem(
                                 onClick = {
                                     intervalType = type
@@ -201,6 +212,58 @@ fun AddAlarmsContent(
                     }
                 }
             }
+            Spacer(modifier = Modifier.height(16.dp))
+            Text(text = stringResource(R.string.from))
+            Spacer(modifier = Modifier.height(16.dp))
+            SingleChoiceSegmentedButtonRow {
+                dateOptions.forEachIndexed { index, label ->
+                    SegmentedButton(
+                        shape = SegmentedButtonDefaults.itemShape(
+                            index = index,
+                            count = dateOptions.size
+                        ),
+                        onClick = { selectedDateIndex = index },
+                        selected = index == selectedDateIndex
+                    ) {
+                        Text(label)
+                    }
+                }
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+            AnimatedVisibility(dateOptions[selectedDateIndex] == "Other") {
+                OutlinedTextField(
+                    value = startTime.timeInMillis.convertToDisplayTime(
+                        locale = getLocale(),
+                        pattern = "dd MMM yyyy"
+                    ),
+                    onValueChange = { },
+                    label = { Text(text = stringResource(R.string.start_date)) },
+                    readOnly = true,
+                    trailingIcon = {
+                        IconButton(onClick = { openDatePickerDialog = true }) {
+                            Icon(
+                                imageVector = Icons.Outlined.DateRange,
+                                contentDescription = null,
+                            )
+                        }
+                    }
+                )
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+            OutlinedTextField(
+                value = startTime.timeInMillis.convertToDisplayTime(locale = getLocale()),
+                onValueChange = { },
+                label = { Text(text = stringResource(R.string.start_time)) },
+                readOnly = true,
+                trailingIcon = {
+                    IconButton(onClick = { openTimePickerDialog = true }) {
+                        Icon(
+                            imageVector = Icons.Outlined.AccessTime,
+                            contentDescription = null,
+                        )
+                    }
+                }
+            )
             Spacer(modifier = Modifier.height(16.dp))
             OutlinedTextField(
                 value = messageText,

@@ -1,12 +1,13 @@
 package com.kinnerapriyap.overandoveragain.ui.composables
 
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerState
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.SelectableDates
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TimePicker
-import androidx.compose.material3.TimePickerState
-import androidx.compose.material3.rememberTimePickerState
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import com.kinnerapriyap.overandoveragain.R
@@ -14,29 +15,31 @@ import java.util.Calendar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TimePickerDial(
+fun DatePickerDial(
     time: Calendar,
-    onConfirm: (TimePickerState) -> Unit,
+    onConfirm: (DatePickerState) -> Unit,
     onDismiss: () -> Unit,
 ) {
-    val timePickerState = rememberTimePickerState(
-        initialHour = time.get(Calendar.HOUR_OF_DAY),
-        initialMinute = time.get(Calendar.MINUTE),
-        is24Hour = true,
+    val datePickerState = rememberDatePickerState(
+        initialSelectedDateMillis = time.timeInMillis,
+        selectableDates = object : SelectableDates {
+            override fun isSelectableDate(utcTimeMillis: Long): Boolean =
+                utcTimeMillis > System.currentTimeMillis()
+        }
     )
 
-    TimePickerDialog(
+    DatePickerDialog(
         onDismiss = { onDismiss() },
-        onConfirm = { onConfirm(timePickerState) }
+        onConfirm = { onConfirm(datePickerState) }
     ) {
-        TimePicker(
-            state = timePickerState,
+        DatePicker(
+            state = datePickerState,
         )
     }
 }
 
 @Composable
-private fun TimePickerDialog(
+private fun DatePickerDialog(
     onDismiss: () -> Unit,
     onConfirm: () -> Unit,
     content: @Composable () -> Unit
